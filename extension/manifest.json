@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Rezka Redesign",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Rezka in a new skin: full-width layout, theater mode, IMDb rating per episode.",
   "permissions": ["storage"],
   "host_permissions": ["https://www.omdbapi.com/*"],

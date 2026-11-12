@@ -86,7 +86,8 @@
   const toggleTheater = (on = !root.classList.contains('rz-theater')) => {
     root.classList.toggle('rz-theater', on);
     $$('.rz-theater-btn').forEach((b) => b.setAttribute('aria-pressed', on));
-    window.dispatchEvent(new Event('resize'));
+    // YouTube-style: the player fills the window but stays in the page, so you can scroll to episodes and comments
+    $(on ? '#cdnplayer-container' : '#rz-watch')?.scrollIntoView({ block: 'start' });
   };
   document.addEventListener('keydown', (e) => {
     if (e.target.closest('input, textarea, [contenteditable="true"]') || e.metaKey || e.ctrlKey || e.altKey) return;
@@ -152,7 +153,6 @@
   const trailer = $('.b-sidelinks__link.show-trailer');
   const rateWidget = $('.b-post__rating_table');
   const voices = $('.b-translators__block');
-  const player = $('#player');
   const schedule = $('.b-post__schedule');
   const comments = ['#addcomment-title', '#comments-form', '#hd-comments-list', '#hd-comments-navigation'].map((s) => $(s));
   const commentsCount = txt($('#comments-list-button em'));
@@ -176,8 +176,7 @@
   const theaterBtn = h('button', { class: 'rz-ghost rz-theater-btn', type: 'button', 'aria-pressed': 'false', onclick: () => toggleTheater() });
   theaterBtn.innerHTML = ICON.theater + 'Кинотеатр<span class="rz-kbd">T</span>';
   const watch = h('section', { id: 'rz-watch', class: 'rz-watch' },
-    h('div', { class: 'rz-wrap rz-watchbar' }, h('h2', { class: 'rz-h2' }, 'Смотреть'), voices, theaterBtn),
-    h('div', { class: 'rz-wrap' }, player));
+    h('div', { class: 'rz-wrap rz-watchbar' }, h('h2', { class: 'rz-h2' }, 'Смотреть'), voices, theaterBtn));
 
   const franchise = $$('.b-post__partcontent_item').map((it) => {
     const a = $('a', it), cur = it.classList.contains('current');
@@ -195,8 +194,11 @@
       franchise.length ? h('section', { class: 'rz-sec' }, h('h2', { class: 'rz-h2' }, 'Вся франшиза'), h('div', { class: 'rz-card rz-frlist' }, franchise)) : null,
       similar.length ? h('section', { class: 'rz-sec' }, h('h2', { class: 'rz-h2' }, 'Смотреть ещё'), h('div', { class: 'rz-simgrid' }, similar)) : null));
 
-  const page = h('div', { id: 'rz-title' }, hero, tagsBand, watch, lower);
-  header.after(page);
+  // #player is never moved: moving it reloads Playerjs's resize-watcher iframe and the player stops adapting to its size.
+  // Our blocks go around Rezka's own container, which shows nothing but the player.
+  const content = $('.b-container.b-content') || $('#player').closest('.b-content__columns');
+  content.before(h('div', { id: 'rz-title' }, hero, tagsBand, watch));
+  content.after(lower);
 
   // ---------- IMDb rating per episode (OMDb) ----------
   const imdbId = (() => {
