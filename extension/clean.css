@@ -57,7 +57,8 @@ html.rz-on .b-wrapper { width: auto !important; max-width: 1360px; margin: 0 aut
 .rz-lrl { font-size: 12px; text-align: right; }
 .rz-lall { display: block; margin-top: 4px; padding: 14px; border-radius: 16px; box-shadow: 0 -1px 0 var(--rz-hair); color: var(--rz-ink2) !important; font-size: 14px; }
 .rz-ib { position: relative; width: 44px; height: 44px; border: 0; border-radius: 50%; background: transparent; color: var(--rz-ink2); display: grid; place-items: center; cursor: pointer; transition: background .25s var(--rz-ease), color .25s var(--rz-ease); }
-.rz-ib:hover { background: rgba(255,255,255,.07); color: var(--rz-ink); }
+#rz-header .rz-ib { color: var(--rz-ink2) !important; }
+#rz-header .rz-ib:hover { background: rgba(255,255,255,.07); color: var(--rz-ink) !important; }
 .rz-me { background: var(--rz-s3); color: var(--rz-ink); }
 
 /* ===================== Footer ===================== */

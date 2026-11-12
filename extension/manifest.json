@@ -1,11 +1,16 @@
 {
   "manifest_version": 3,
   "name": "Rezka Redesign",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Rezka in a new skin: full-width layout, theater mode, IMDb rating per episode.",
   "permissions": ["storage"],
   "host_permissions": ["https://www.omdbapi.com/*"],
   "options_ui": { "page": "options.html", "open_in_tab": false },
+  "web_accessible_resources": [{ "resources": ["clean.css"], "matches": [
+    "*://rezka.ag/*", "*://*.rezka.ag/*", "*://rezka-ag.net/*", "*://hdrezka.me/*", "*://hdrezka.ag/*", "*://hdrezka.ac/*",
+    "*://hdrezka.co/*", "*://hdrezka.cm/*", "*://hdrezka.re/*", "*://hdrezka.sh/*", "*://hdrezka.ink/*", "*://hdrezka.kim/*",
+    "*://hdrezka.name/*", "*://hdrezka.website/*", "*://hdrezka.today/*", "*://hdrezka.tv/*", "*://hdrezka.in/*"
+  ] }],
   "content_scripts": [
     {
       "matches": [
