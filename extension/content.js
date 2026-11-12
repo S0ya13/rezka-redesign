@@ -118,6 +118,7 @@
         h('a', { class: 'rz-tag', href: section[1], 'aria-current': here === section[1] ? 'page' : null }, 'Все жанры'),
         genres.map((a) => h('a', { class: 'rz-tag', href: a.getAttribute('href'), 'aria-current': here.startsWith(a.getAttribute('href')) ? 'page' : null }, txt(a)))));
     }
+    root.classList.add('rz-ready');
     return;
   }
 
@@ -204,6 +205,7 @@
   const content = $('.b-container.b-content') || $('#player').closest('.b-content__columns');
   content.before(h('div', { id: 'rz-title' }, hero, tagsBand, watch));
   content.after(lower);
+  root.classList.add('rz-ready');
 
   // ---------- IMDb rating per episode (OMDb) ----------
   const imdbId = (() => {

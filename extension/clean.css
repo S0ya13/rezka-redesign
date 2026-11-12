@@ -9,6 +9,12 @@
   --rz-text: 'Golos Text', system-ui, sans-serif;
 }
 
+/* ===================== No flash of Rezka's own design ===================== */
+/* Dark from the first paint; page hidden until content.js adds .rz-ready (CSS fallback reveals it after 3s if the script fails) */
+html { background: #0E0C0A !important; }
+html:not(.rz-ready) body { visibility: hidden; animation: rz-reveal 0s linear 3s forwards; }
+@keyframes rz-reveal { to { visibility: visible; } }
+
 /* ===================== Clutter (always) ===================== */
 html body.has-brand, html body.active-brand.pp { padding-top: 0 !important; background-image: none !important; }
 .b-tophead__subscribe-dropdown, .b-prem-button, .b-post__prem_content, .vk-group, .share-btn-item.vk,
