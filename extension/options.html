@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Rezka Redesign</title>
+<style>
+  body { font: 14px/1.5 system-ui, sans-serif; margin: 16px; min-width: 340px; }
+  label { display: block; font-weight: 600; margin-bottom: 6px; }
+  input { width: 100%; box-sizing: border-box; padding: 8px; font: inherit; }
+  p { color: #555; margin: 8px 0 0; }
+</style>
+</head>
+<body>
+  <label for="key">OMDb API key</label>
+  <input id="key" type="password" autocomplete="off" spellcheck="false">
+  <p>Бесплатный ключ: omdbapi.com → API Key. Нужен для оценок IMDb по сериям. <span id="status"></span></p>
+  <script src="options.js"></script>
+</body>
+</html>

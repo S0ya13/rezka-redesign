@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Rezka Redesign",
+  "version": "0.2.0",
+  "description": "Rezka in a new skin: full-width layout, theater mode, IMDb rating per episode.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://www.omdbapi.com/*"],
+  "options_ui": { "page": "options.html", "open_in_tab": false },
+  "content_scripts": [
+    {
+      "matches": ["*://rezka.ag/*", "*://*.rezka.ag/*"],
+      "css": ["clean.css"],
+      "run_at": "document_start"
+    },
+    {
+      "matches": ["*://rezka.ag/*", "*://*.rezka.ag/*"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ]
+}
