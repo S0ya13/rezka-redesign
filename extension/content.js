@@ -101,9 +101,141 @@
     else if (e.key === 'Escape' && root.classList.contains('rz-theater')) toggleTheater(false);
   });
 
+  // ---------- "Continue watching": Rezka's own /continue/ list (logged-in only), cached for 2 min per tab ----------
+  const loggedIn = ($('#member_user_id')?.value || '0') !== '0';
+  const loadContinue = async () => {
+    if (!loggedIn) return [];
+    try { const c = JSON.parse(sessionStorage.getItem('rz-continue') || 'null'); if (c && Date.now() - c.at < 120000) return c.rows; } catch {}
+    const doc = new DOMParser().parseFromString(await (await fetch('/continue/', { credentials: 'include' })).text(), 'text/html');
+    const rows = $$('.b-videosaves__list_item[id]', doc).map((r) => {
+      const a = $('.title a', r), info = $('.info', r), more = txt($('.new-episode', info));
+      return { href: a?.getAttribute('href'), title: txt(a), cover: a?.dataset.cover_url, date: txt($('.date', r)), last: txt(info).replace(more, '').trim(), more };
+    }).filter((r) => r.href);
+    try { sessionStorage.setItem('rz-continue', JSON.stringify({ at: Date.now(), rows })); } catch {}
+    return rows;
+  };
+  const samePage = (href) => { try { return new URL(href, location.href).pathname === location.pathname; } catch { return false; } };
+
+  // ---------- Hot series updates: one row per episode, all voices in it ----------
+  const groupUpdates = () => {
+    for (const list of $$('.b-seriesupdate__block_list:not([data-rzg])')) {
+      list.dataset.rzg = '1';
+      const seen = new Map();
+      for (const li of $$('.b-seriesupdate__block_list_item', list)) {
+        const cell = $('.cell-2', li), voice = txt($('i', cell)).replace(/^\(|\)$/g, '');
+        const key = [$('.b-seriesupdate__block_list_link', li)?.getAttribute('href'), txt($('.season', li)), txt(cell?.firstChild)].join('|');
+        const first = seen.get(key);
+        if (!first) { seen.set(key, { cell, voices: voice ? [voice] : [] }); continue; }
+        if (voice && !first.voices.includes(voice)) first.voices.push(voice);
+        let i = $('i', first.cell); if (!i) { i = h('i'); first.cell.append(' ', i); }
+        i.textContent = '(' + first.voices.join(', ') + ')';
+        li.style.display = 'none';
+      }
+    }
+  };
+  const updates = $('.b-seriesupdate__block')?.parentElement;
+  if (updates) {
+    groupUpdates();
+    new MutationObserver(groupUpdates).observe(updates, { childList: true, subtree: true });
+  }
+
+  // ---------- Card preview on hover (Rezka's quick_content endpoint) ----------
+  const quick = new Map();
+  const pop = h('div', { class: 'rz-pop', role: 'dialog', hidden: '' });
+  document.body.append(pop);
+  let hoverTimer, hoverCard;
+  const hidePop = () => { pop.hidden = true; hoverCard = null; };
+  const showPop = async (card) => {
+    const id = card.dataset.id;
+    if (!id) return;
+    if (!quick.has(id)) quick.set(id, fetch('/engine/ajax/quick_content.php', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8', 'X-Requested-With': 'XMLHttpRequest' }, body: `id=${id}&is_touch=1` })
+      .then((r) => r.text()).then((t) => new DOMParser().parseFromString(t, 'text/html')).catch(() => null));
+    const doc = await quick.get(id);
+    if (!doc || hoverCard !== card) return;
+    const link = $('a', card)?.getAttribute('href');
+    const rating = $('.b-content__bubble_rating b', doc);
+    const facts = h('dl', {});
+    let desc = '';
+    for (const b of $$('.b-content__bubble_text, .b-content__bubble_str', doc)) {
+      const label = txt($('.label', b)).replace(/:$/, '');
+      if (!label) { desc = txt(b); continue; }
+      $('.label', b).remove();
+      facts.append(h('dt', {}, label === 'Возрастное ограничение' ? 'Возраст' : label), h('dd', {}, txt(b)));
+    }
+    const trailerEl = $('.trailer', card);
+    pop.replaceChildren(
+      h('div', { class: 'rz-pop-top' }, h('span', { class: 'rz-muted' }, [txt($('.b-content__catlabel', doc)), txt($('.info', card))].filter(Boolean).join(' · ')),
+        rating ? h('span', { class: 'rz-pop-r' }, '★ ' + txt(rating)) : null),
+      h('b', { class: 'rz-pop-t' }, txt($('.b-content__bubble_title', doc))),
+      desc ? h('p', {}, desc) : null,
+      facts,
+      h('div', { class: 'rz-pop-act' },
+        h('a', { class: 'rz-cta rz-cta-sm', href: link }, 'Смотреть', h('span', { class: 'rz-nub', html: ICON.play })),
+        trailerEl ? h('button', { class: 'rz-ghost', type: 'button', onclick: () => trailerEl.click() }, 'Трейлер') : null));
+    const r = card.getBoundingClientRect(), w = 340;
+    pop.hidden = false;
+    const left = r.right + 14 + w < innerWidth ? r.right + 14 : r.left - 14 - w;
+    pop.style.left = Math.max(8, left) + 'px';
+    pop.style.top = Math.max(88, Math.min(r.top, innerHeight - pop.offsetHeight - 16)) + 'px';
+  };
+  document.addEventListener('mouseover', (e) => {
+    if (e.target.closest('.rz-pop')) { clearTimeout(hoverTimer); return; }
+    const card = e.target.closest('.b-content__inline_items .b-content__inline_item');
+    if (card === hoverCard) return;
+    clearTimeout(hoverTimer);
+    if (!card) { hoverTimer = setTimeout(hidePop, 200); return; }
+    hidePop(); hoverCard = card;
+    hoverTimer = setTimeout(() => showPop(card), 450);
+  });
+  addEventListener('scroll', hidePop, { passive: true });
+
   root.classList.add('rz-on');
   if (!isTitle) {
     root.classList.add('rz-list');
+    const main = $('.b-content__main') || $('#main');
+
+    // home: "Continue watching" row on top
+    if (here === '/' && loggedIn) {
+      loadContinue().then((rows) => {
+        if (!rows.length) return;
+        const anchor = $('.b-newest_slider_wrapper') || $('.b-container.b-content');
+        anchor?.before(h('section', { class: 'rz-wrap rz-cont' },
+          h('div', { class: 'rz-sechead' }, h('h2', { class: 'rz-h2' }, 'Продолжить просмотр'), h('a', { class: 'rz-link', href: '/continue/' }, 'Вся история')),
+          h('div', { class: 'rz-contgrid' }, rows.slice(0, 6).map((r) => h('a', { class: 'rz-contcard', href: r.href },
+            r.cover ? h('img', { src: r.cover, alt: '' }) : null,
+            h('span', { class: 'rz-contbody' }, h('b', {}, r.title), h('span', {}, r.last || r.date),
+              r.more ? h('span', { class: 'rz-contmore' }, r.more.replace(/^смотреть /, '')) : h('span', { class: 'rz-muted' }, r.date)))))));
+      }).catch((e) => console.warn('[rezka-redesign]', e));
+    }
+
+    // bookmarks + history: one switcher on both pages; history rows get covers
+    if (/^\/(favorites|continue)\//.test(here)) {
+      const isHist = here.startsWith('/continue/');
+      const hTitle = $('.b-content__htitle h1') || $('h1', main);
+      if (hTitle) {
+        hTitle.textContent = isHist ? 'История' : 'Закладки';
+        hTitle.closest('.b-content__htitle')?.after(h('nav', { class: 'rz-switch', 'aria-label': 'Раздел' },
+          h('a', { href: '/favorites/', 'aria-current': isHist ? null : 'page' }, 'Закладки'),
+          h('a', { href: '/continue/', 'aria-current': isHist ? 'page' : null }, 'История просмотра')));
+      }
+      for (const a of $$('.b-videosaves__list_item .title a[data-cover_url]')) a.closest('.title').prepend(h('img', { class: 'rz-hcover', src: a.dataset.cover_url, alt: '' }));
+    }
+
+    // search: filter results by type
+    if (here.startsWith('/search/')) {
+      const items = $$('.b-content__inline_items .b-content__inline_item');
+      const kinds = [['Все', null], ['Фильмы', 'films'], ['Сериалы', 'series'], ['Мультфильмы', 'cartoons'], ['Аниме', 'animation']];
+      const kindOf = (it) => $('.cat', it)?.classList[1];
+      const chips = kinds.map(([name, k]) => [name, k, items.filter((it) => !k || kindOf(it) === k).length]).filter(([, k, n]) => !k || n);
+      if (chips.length > 2) {
+        const nav = h('nav', { class: 'rz-genres rz-kinds', 'aria-label': 'Тип' });
+        const pick = (k) => { for (const it of items) it.style.display = !k || kindOf(it) === k ? '' : 'none'; $$('a', nav).forEach((a) => a.toggleAttribute('aria-current', a.dataset.k === String(k))); };
+        nav.append(...chips.map(([name, k, n]) => h('a', { class: 'rz-tag', href: '#', 'data-k': String(k), onclick: (e) => { e.preventDefault(); pick(k); } }, name, h('span', { class: 'rz-muted' }, ' ' + n))));
+        $('.b-content__inline_items')?.before(nav);
+        pick(null);
+      }
+    }
+
     // "Смотреть сериалы в HD онлайн" -> "Сериалы"
     const h1 = $('.b-content__htitle h1');
     if (h1) h1.textContent = txt(h1).replace(/^Смотреть\s+/i, '').replace(/\s+в\s+HD\s+онлайн$/i, '').replace(/^./, (c) => c.toUpperCase());
@@ -163,6 +295,18 @@
   const comments = ['#addcomment-title', '#comments-form', '#hd-comments-list', '#hd-comments-navigation'].map((s) => $(s));
   const commentsCount = txt($('#comments-list-button em'));
 
+  // "Смотреть" scrolls to the player and starts it (player.js listens for rz-play); becomes "Продолжить" if it's in history
+  const ctaLabel = h('span', {}, 'Смотреть');
+  const cta = h('a', { class: 'rz-cta', href: '#rz-watch', onclick: (e) => {
+    e.preventDefault();
+    $('#cdnplayer-container')?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    document.dispatchEvent(new CustomEvent('rz-play'));
+  } }, ctaLabel, h('span', { class: 'rz-nub', html: ICON.play }));
+  loadContinue().then((rows) => {
+    const r = rows.find((x) => samePage(x.href));
+    if (r) ctaLabel.replaceChildren('Продолжить', r.last ? h('small', {}, r.last.replace(/\s*\(.*\)$/, '')) : null);
+  }).catch(() => {});
+
   const hero = h('section', { class: 'rz-wrap rz-hero' },
     poster && h('img', { class: 'rz-poster', src: poster, alt: 'Постер: ' + title }),
     h('div', { class: 'rz-head' },
@@ -172,7 +316,7 @@
       h('div', { class: 'rz-rates' }, ratingBlock('IMDb', imdb, true), ratingBlock('Кинопоиск', kp), ratingBlock('Зрители Rezka', viewers)),
       h('p', { class: 'rz-desc' }, txt($('.b-post__description_text'))),
       h('div', { class: 'rz-actions' },
-        h('a', { class: 'rz-cta', href: '#rz-watch' }, 'Смотреть', h('span', { class: 'rz-nub', html: ICON.play })),
+        cta,
         trailer, favWidget),
       rateWidget && h('div', { class: 'rz-myrate' }, h('span', { class: 'rz-muted' }, 'Ваша оценка'), rateWidget)),
     h('aside', { class: 'rz-card' }, facts));
@@ -252,6 +396,6 @@
     paint();
     let timer;
     new MutationObserver(() => { clearTimeout(timer); timer = setTimeout(paint, 120); })
-      .observe($('#player') || document.body, { childList: true, subtree: true });
+      .observe($('#simple-episodes-tabs') || $('#player') || document.body, { childList: true, subtree: true });
   }
 })();
