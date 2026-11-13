@@ -405,7 +405,11 @@ export async function init() {
   Object.assign(theme, await chrome.storage.sync.get({ mode: 'dark', palette: 'sumerki' }));
   applyTheme();
   root.classList.add('rz-on');
-  document.body.prepend(h('div', { class: 'rz-amb', 'aria-hidden': 'true' }, h('i'), h('i'), h('i'), h('i')));
+  const amb = h('div', { class: 'rz-amb', 'aria-hidden': 'true' }, h('i'), h('i'), h('i'), h('i'));
+  document.body.prepend(amb);
+  // the light holds still while the page scrolls, so the GPU paints the content coming into view instead
+  let still;
+  addEventListener('scroll', () => { amb.classList.add('rz-still'); clearTimeout(still); still = setTimeout(() => amb.classList.remove('rz-still'), 300); }, { passive: true });
   const { search } = buildHeader();
   buildFooter();
   hoverPreview();

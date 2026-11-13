@@ -12,8 +12,7 @@ html.rz-home #main { padding-top: 0 !important; }
 .rz-mast-l p { margin: 0; display: flex; flex-wrap: wrap; gap: 8px 22px; font: 700 22px/1.2 var(--text); color: var(--on-sig); }
 .rz-mast-l p a { color: var(--on-sig) !important; text-decoration: underline !important; text-underline-offset: 4px; }
 .rz-mast-r { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
-.rz-mcont { display: flex; gap: 18px; padding: 18px; border-radius: 6px; background: var(--blk); color: #EEF0F8 !important; text-decoration: none !important;
-  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); transition: background .2s; }
+.rz-mcont { display: flex; gap: 18px; padding: 18px; border-radius: 6px; background: var(--blk); color: #EEF0F8 !important; text-decoration: none !important; transition: background .2s; }
 .rz-mcont:hover { background: color-mix(in srgb, var(--blk) 80%, var(--sig)); }
 .rz-mcont img { width: 104px; height: 156px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
 .rz-mcont-b { display: flex; flex-direction: column; gap: 8px; min-width: 0; flex-grow: 1; }
@@ -58,7 +57,7 @@ html.rz-on .rz-wall { grid-auto-flow: dense; }
 /* «Продолжить» strip */
 .rz-hcont { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
 .rz-ci { display: flex; gap: 16px; padding: 16px; border-radius: 6px; background: var(--s1); border: 1px solid var(--line); color: var(--ink) !important; text-decoration: none !important;
-  -webkit-backdrop-filter: var(--glass); backdrop-filter: var(--glass); box-shadow: inset 0 1px 0 var(--rim), var(--sh); transition: border-color .2s; }
+  box-shadow: inset 0 1px 0 var(--rim), var(--sh); transition: border-color .2s; }
 .rz-ci:hover { border-color: var(--sig); }
 .rz-ci img { width: 96px; height: 144px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
 .rz-ci-b { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
