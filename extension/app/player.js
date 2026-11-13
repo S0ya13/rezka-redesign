@@ -68,7 +68,7 @@
   const spin = el('div', 'rz-pspin'); spin.setAttribute('role', 'status'); spin.setAttribute('aria-label', 'Загрузка видео'); spin.hidden = true;
   const ctl = el('div', 'rz-pctl');
   const seek = el('div', 'rz-pseek');
-  const line = el('div', 'rz-pline', '<span class="rz-pbuf"></span><span class="rz-pdone"></span><span class="rz-pknob"></span><span class="rz-phov"></span><span class="rz-ptip"></span>');
+  const line = el('div', 'rz-pline', '<span class="rz-pbuf"></span><span class="rz-pdone"></span><span class="rz-pknob"></span><span class="rz-phov"></span><span class="rz-ptip"><i class="rz-pthumb" hidden></i><b></b></span>');
   line.setAttribute('role', 'slider'); line.setAttribute('aria-label', 'Перемотка'); line.setAttribute('aria-valuemin', '0'); line.tabIndex = 0;
   seek.append(line);
   const bar = el('div', 'rz-pbar');
@@ -88,13 +88,14 @@
   const bQual = btn('rz-pql', 'Качество', '', () => menu('q'));
   const bTheater = btn('', 'Кинотеатр (T)', I.theater, () => $('.rz-theater-btn')?.click());
   const bFull = btn('', 'Полный экран (F)', I.full, () => fullscreen());
-  const pop = el('div', 'rz-pm'); pop.hidden = true; pop.setAttribute('role', 'dialog');
+  const pop = el('div', 'rz-pm'); pop.inert = true; pop.setAttribute('role', 'dialog');
+  const osd = el('div', 'rz-posd'); osd.setAttribute('aria-hidden', 'true');
   const nextCard = el('div', 'rz-pnext'); nextCard.hidden = true; nextCard.setAttribute('role', 'dialog'); nextCard.setAttribute('aria-label', 'Следующая серия');
   const msg = el('div', 'rz-pmsg'); msg.hidden = true; msg.setAttribute('role', 'alert');
   const fsx = el('span', 'rz-pfsx', 'Esc — выйти из полноэкранного режима'); fsx.hidden = true;
   bar.append(bPlay, bBack, bFwd, bNext, bVol, vol, time, grow, bCC, bGear, bQual, bTheater, bFull);
   ctl.append(seek, bar);
-  ui.append(el('div', 'rz-pscrim'), plate, big, spin, ccTip, pop, nextCard, msg, fsx, ctl);
+  ui.append(el('div', 'rz-pscrim'), el('div', 'rz-pscrim rz-ptop'), plate, big, spin, osd, ccTip, pop, nextCard, msg, fsx, ctl);
   holder.append(ui);
 
   const episodes = () => [...document.querySelectorAll('.b-simple_episode__item:not(.disabled)')];
@@ -123,11 +124,57 @@
       const b = el('button', on ? 'on' : '', label); b.type = 'button';
       if (on) b.setAttribute('aria-pressed', 'true');
       if (dis) { b.disabled = true; b.className = 'dis'; }
-      b.addEventListener('click', (e) => { e.stopPropagation(); act(); closeMenu(); });
+      // the subtitles menu stays open (track and look are picked together), the others close on a pick
+      b.addEventListener('click', (e) => { e.stopPropagation(); act(); if (menuKind === 'cc') render(); else closeMenu(); });
       col.append(b);
     }
     return col;
   };
+
+  // subtitles look: size and position follow the player's height; kept in the site's localStorage
+  const LOOK = {
+    size: [['Мелкий', 0.034], ['Средний', 0.043], ['Крупный', 0.054], ['Очень крупный', 0.068]],
+    color: [['Белый', '#FFFFFF'], ['Жёлтый', '#FFE14D']],
+    bg: [['Без фона', 'none'], ['Полупрозрачный', 'semi'], ['Сплошной', 'solid']],
+    pos: [['Ниже', 0.045], ['Обычно', 0], ['Выше', -0.11]],
+  };
+  const look = { size: 1, color: 0, bg: 1, pos: 1 };
+  try { for (const [k, v] of Object.entries(JSON.parse(localStorage.getItem('rz-subs')) || {})) if (LOOK[k]?.[v]) look[k] = v; } catch {}
+  const applyLook = () => {
+    holder.style.setProperty('--rz-sc', LOOK.color[look.color][1]);
+    holder.dataset.rzSbg = LOOK.bg[look.bg][1];
+    lookKey = '';
+  };
+  let lookKey = '';
+  const sizeLook = () => { // tick: font size and offset in px of the current player height
+    const hgt = holder.clientHeight, key = hgt + '|' + look.size + '|' + look.pos;
+    if (key === lookKey) return;
+    lookKey = key;
+    holder.style.setProperty('--rz-sfs', Math.max(16, Math.round(hgt * LOOK.size[look.size][1])) + 'px');
+    holder.style.setProperty('--rz-sy', Math.round(hgt * LOOK.pos[look.pos][1]) + 'px');
+  };
+  const lookColumn = () => {
+    const col = el('div', 'rz-pcol rz-plook', '<h4>Вид</h4>');
+    for (const [key, title] of [['size', 'Размер'], ['color', 'Цвет'], ['bg', 'Фон'], ['pos', 'Положение']]) {
+      const row = el('div', 'rz-plk', `<span>${title}</span>`), opts = el('div', 'rz-plk-o');
+      row.setAttribute('role', 'group'); row.setAttribute('aria-label', title);
+      LOOK[key].forEach(([label, val], i) => {
+        const b = el('button', 'rz-ps-' + key + (i === look[key] ? ' on' : ''), key === 'size' ? 'Аа' : key === 'color' ? `<i style="background:${val}"></i>${label}` : label);
+        b.type = 'button'; b.setAttribute('aria-pressed', String(i === look[key]));
+        if (key === 'size') { b.setAttribute('aria-label', label); b.title = label; b.style.fontSize = 12 + i * 3 + 'px'; }
+        b.addEventListener('click', (e) => {
+          e.stopPropagation(); look[key] = i;
+          try { localStorage.setItem('rz-subs', JSON.stringify(look)); } catch {}
+          applyLook(); sizeLook();
+          for (const x of opts.children) { const on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-pressed', String(on)); }
+        });
+        opts.append(b);
+      });
+      row.append(opts); col.append(row);
+    }
+    return col;
+  };
+  applyLook();
   const cols = {
     q: () => {
       const cur = clean(api('quality'));
@@ -144,15 +191,24 @@
     },
   };
   let menuKind = null;
-  const closeMenu = () => { pop.hidden = true; menuKind = null; for (const b of [bCC, bGear, bQual]) b.classList.remove('on'); };
+  const closeMenu = () => {
+    if (pop.contains(document.activeElement)) ({ all: bGear, q: bQual, cc: bCC })[menuKind]?.focus({ preventScroll: true });
+    pop.classList.remove('rz-open'); pop.inert = true; menuKind = null;
+    for (const b of [bCC, bGear, bQual]) b.classList.remove('on');
+  };
+  const render = () => {
+    const kind = menuKind;
+    pop.replaceChildren(...(kind === 'all' ? [cols.q(), cols.cc(), cols.sp()] : kind === 'cc' && subs().length ? [cols.cc(), lookColumn()] : [cols[kind]()]));
+    pop.classList.toggle('rz-one', kind === 'q' || (kind === 'cc' && !subs().length));
+    pop.classList.toggle('rz-two', kind === 'cc' && subs().length > 0);
+  };
   const menu = (kind) => {
     if (menuKind === kind) { closeMenu(); return; }
     closeMenu();
     menuKind = kind;
-    pop.replaceChildren(...(kind === 'all' ? [cols.q(), cols.cc(), cols.sp()] : [cols[kind]()]));
-    pop.classList.toggle('rz-one', kind !== 'all');
+    render();
     pop.setAttribute('aria-label', { all: 'Качество, субтитры и скорость', q: 'Качество', cc: 'Субтитры' }[kind]);
-    pop.hidden = false;
+    pop.classList.add('rz-open'); pop.inert = false;
     ({ all: bGear, q: bQual, cc: bCC })[kind].classList.add('on');
     pop.querySelector('button:not(:disabled)')?.focus({ preventScroll: true });
     wake();
@@ -178,10 +234,22 @@
     dragging = true; move(e);
     line.addEventListener('pointermove', move); line.addEventListener('pointerup', up);
   });
+  const tip = line.querySelector('.rz-ptip'), thumb = tip.querySelector('.rz-pthumb'), tipTime = tip.querySelector('b');
+  line.addEventListener('pointerenter', () => { for (const u of new Set(thumbs.map((c) => c.url))) new Image().src = u; });
   line.addEventListener('pointermove', (e) => {
-    const [f, s] = seekAt(e.clientX);
+    const [f, s] = seekAt(e.clientX), d = +api('duration');
     line.style.setProperty('--h', f);
-    line.querySelector('.rz-ptip').textContent = +api('duration') ? fmt(s) : '';
+    tip.classList.toggle('rz-has', !!d);
+    tipTime.textContent = d ? fmt(s) : '';
+    const c = d ? thumbs.find((x) => s >= x.s && s < x.e) : null;
+    thumb.hidden = !c;
+    if (c) {
+      const k = 224 / c.w, [sw, sh] = sheets.get(c.url);
+      Object.assign(thumb.style, { width: c.w * k + 'px', height: c.h * k + 'px', backgroundImage: `url("${c.url}")`,
+        backgroundSize: `${sw * k}px ${sh * k}px`, backgroundPosition: `${-c.x * k}px ${-c.y * k}px` });
+    }
+    const w = line.clientWidth, half = tip.offsetWidth / 2;
+    tip.style.left = Math.min(w - half, Math.max(half, f * w)) + 'px';
   });
   line.addEventListener('click', (e) => e.stopPropagation());
   line.addEventListener('keydown', (e) => {
@@ -189,27 +257,73 @@
     else if (e.key === 'Home' || e.key === 'End') { e.preventDefault(); api('seek', e.key === 'Home' ? 0 : Math.max(0, (+api('duration') || 0) - 1)); }
   });
 
+  // ---------- frame previews: Rezka's WebVTT of sprite tiles (time range → image#xywh) ----------
+  let thumbs = [], thumbSrc = null;
+  const sheets = new Map(); // sprite url → [width, height]
+  const parseTiles = (text, base) => {
+    const sec = (t) => t.split(':').reduce((a, x) => a * 60 + parseFloat(x), 0);
+    const out = [];
+    for (const m of text.matchAll(/([\d:.]+)\s*-->\s*([\d:.]+)[^\n]*\n\s*(\S+?)#xywh=(\d+),(\d+),(\d+),(\d+)/g)) {
+      const c = { s: sec(m[1]), e: sec(m[2]), url: new URL(m[3], base).href, x: +m[4], y: +m[5], w: +m[6], h: +m[7] };
+      const [sw, sh] = sheets.get(c.url) || [0, 0];
+      sheets.set(c.url, [Math.max(sw, c.x + c.w), Math.max(sh, c.y + c.h)]);
+      out.push(c);
+    }
+    return out;
+  };
+  const loadThumbs = async (src) => {
+    if (src === thumbSrc) return;
+    thumbSrc = src; thumbs = [];
+    if (!src) return;
+    try {
+      const base = new URL(src, location.href), list = parseTiles(await (await fetch(base, { credentials: 'include' })).text(), base);
+      if (thumbSrc === src) thumbs = list;
+    } catch { /* no previews for this stream: the tip shows the time only */ }
+  };
+  {
+    const init = [...document.scripts].map((x) => x.textContent).find((x) => /initCDN\w+Events\(/.test(x));
+    const m = init && init.match(/"thumbnails":"((?:[^"\\]|\\.)*)"/);
+    try { loadThumbs(m ? JSON.parse('"' + m[1] + '"') : ''); } catch { loadThumbs(''); }
+    window.jQuery?.(document).ajaxSuccess((e, xhr, o) => {
+      if (!/\/ajax\/get_cdn_series\//.test(o?.url || '')) return;
+      let j = xhr.responseJSON;
+      if (!j) try { j = JSON.parse(xhr.responseText); } catch { return; }
+      if (j?.success && 'thumbnails' in j) loadThumbs(j.thumbnails || '');
+    });
+  }
+
   // click on the picture toggles (or closes an open menu), double click goes full screen
   ui.addEventListener('click', (e) => {
     if (e.target !== ui && !e.target.classList.contains('rz-pscrim')) return;
-    if (!pop.hidden) { closeMenu(); return; }
+    if (menuKind) { closeMenu(); return; }
     toggle();
   });
   ui.addEventListener('dblclick', (e) => { if (e.target === ui || e.target.classList.contains('rz-pscrim')) fullscreen(); });
 
   // ---------- panel visibility; subtitles move up while the panel is shown ----------
   let idle;
-  const hideLater = () => { clearTimeout(idle); idle = setTimeout(() => { if (api('playing') && pop.hidden && !ui.contains(document.activeElement)) setAwake(false); }, 2600); };
+  const hideLater = () => { clearTimeout(idle); idle = setTimeout(() => { if (api('playing') && !menuKind && !ui.contains(document.activeElement)) setAwake(false); }, 2600); };
   const setAwake = (on) => { ui.classList.toggle('rz-awake', on); };
   const wake = () => { setAwake(true); hideLater(); };
   holder.addEventListener('mousemove', wake);
-  holder.addEventListener('mouseleave', () => { if (api('playing') && pop.hidden) setAwake(false); });
+  holder.addEventListener('mouseleave', () => { if (api('playing') && !menuKind) setAwake(false); });
   ui.addEventListener('focusin', wake);
 
   // «Смотреть / Продолжить» on the page asks us to start playback
   document.addEventListener('rz-play', () => { if (!api('playing')) api('play'); wake(); });
 
-  // ---------- hotkeys: Space, ← →, F, M (not while typing; Space/arrows only when the player is on screen) ----------
+  let osdTimer;
+  const showVolume = () => {
+    const v = api('muted') ? 0 : Math.round((+api('volume') || 0) * 100);
+    osd.innerHTML = `${v ? I.vol : I.mute}<span class="rz-posd-l"><span style="width:${v}%"></span></span><b>${v}%</b>`;
+    osd.classList.add('rz-show'); clearTimeout(osdTimer); osdTimer = setTimeout(() => osd.classList.remove('rz-show'), 900);
+  };
+  const nudgeVolume = (dv) => {
+    const v = Math.round(Math.min(1, Math.max(0, (api('muted') ? 0 : +api('volume') || 0) + dv)) * 10) / 10;
+    api('unmute'); api('volume', v); showVolume();
+  };
+
+  // ---------- hotkeys: Space, ← → ↑ ↓, F, M (not while typing; Space/arrows only when the player is on screen) ----------
   const onScreen = () => { const r = holder.getBoundingClientRect(); return r.bottom > innerHeight * 0.4 && r.top < innerHeight * 0.6; };
   document.addEventListener('keydown', (e) => {
     if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
@@ -221,11 +335,14 @@
     } else if (k === 'ArrowLeft' || k === 'ArrowRight') {
       if (!onScreen()) return;
       e.preventDefault(); skip(k === 'ArrowLeft' ? -10 : 10); wake();
+    } else if (k === 'ArrowUp' || k === 'ArrowDown') {
+      if (!onScreen()) return;
+      e.preventDefault(); nudgeVolume(k === 'ArrowUp' ? 0.1 : -0.1); wake();
     } else if (k === 'KeyF') { e.preventDefault(); fullscreen(); }
-    else if (k === 'KeyM') { e.preventDefault(); api(api('muted') ? 'unmute' : 'mute'); wake(); }
+    else if (k === 'KeyM') { e.preventDefault(); api(api('muted') ? 'unmute' : 'mute'); showVolume(); wake(); }
   });
   // Esc closes an open menu only (the page's own Esc would also leave the theater)
-  addEventListener('keydown', (e) => { if (e.key === 'Escape' && !pop.hidden) { e.stopPropagation(); closeMenu(); bGear.focus({ preventScroll: true }); } }, true);
+  addEventListener('keydown', (e) => { if (e.key === 'Escape' && menuKind) { e.stopPropagation(); const b = ({ all: bGear, q: bQual, cc: bCC })[menuKind]; closeMenu(); b.focus({ preventScroll: true }); } }, true);
   document.addEventListener('fullscreenchange', () => {
     const on = document.fullscreenElement === holder;
     holder.classList.toggle('rz-fs', on);
@@ -320,6 +437,7 @@
       plate.hidden = !head;
     }
     hideNative();
+    sizeLook();
   };
   setInterval(tick, 250);
   tick(); wake();
