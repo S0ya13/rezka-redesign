@@ -99,28 +99,38 @@ const newestWall = () => {
   const chips = h('div', { class: 'rz-chips', role: 'group', 'aria-label': 'Тип новинок' });
   let page = 0;
   const perPage = () => { const cols = Math.max(4, Math.floor((wall.clientWidth + 16) / 164)); return cols * 2 - 3; }; // 2 rows, the big tile takes 4 cells
+  // Tiles are built once and reused, so a page seen before (or warmed up as a neighbour) shows with its posters already loaded
+  const clones = new WeakMap(), bigs = new Map();
+  const clone = (it) => { if (!clones.has(it)) clones.set(it, it.cloneNode(true)); return clones.get(it); };
+  const bigTile = (first) => {
+    const href = first.dataset.url || $('a', first)?.getAttribute('href');
+    if (bigs.has(href)) return bigs.get(href);
+    const kind = [txt($('.cat .entity', first)), txt($('.info', first))].filter(Boolean).join(' · ');
+    const img = h('img', { src: $('img', first)?.getAttribute('src'), alt: '', decoding: 'async' });
+    const rates = h('span', { class: 'rz-big-r' });
+    const big = h('a', { class: 'rz-big', href },
+      h('span', { class: 'rz-big-img' }, img),
+      h('span', { class: 'rz-big-b' }, h('span', { class: 'rz-d8 rz-dim' }, kind), h('span', { class: 'rz-d rz-big-t' }, txt($('.b-content__inline_item-link a', first))),
+        h('span', { class: 'rz-dim' }, txt($('.b-content__inline_item-link div', first))), rates));
+    loadBig(href).then((i) => {
+      // swap to the big cover only once it is decoded, so it never paints half-loaded
+      if (i.img) { const pre = new Image(); pre.src = i.img; pre.decode().then(() => { img.src = i.img; }, () => {}); }
+      rates.replaceChildren(...[i.imdb && h('span', {}, h('b', { class: 'rz-d' }, i.imdb), ' IMDb'), i.kp && h('span', {}, h('b', { class: 'rz-d' }, i.kp), ' Кинопоиск')].filter(Boolean));
+    });
+    bigs.set(href, big);
+    return big;
+  };
+  const tiles = (items, per, p) => {
+    if (p < 0) return [];
+    const [first, ...rest] = items.slice(p * per, p * per + per);
+    return first ? [bigTile(first), ...rest.map(clone)] : [];
+  };
   const draw = () => {
     const items = $$('#newest-slider .b-content__inline_item', box);
     const per = perPage(), pages = Math.max(1, Math.ceil(items.length / per));
     page = Math.min(page, pages - 1);
-    const slice = items.slice(page * per, page * per + per);
-    const [first, ...rest] = slice;
-    let big = null;
-    if (first) {
-      const href = first.dataset.url || $('a', first)?.getAttribute('href');
-      const kind = [txt($('.cat .entity', first)), txt($('.info', first))].filter(Boolean).join(' · ');
-      const img = h('img', { src: $('img', first)?.getAttribute('src'), alt: '' });
-      const rates = h('span', { class: 'rz-big-r' });
-      big = h('a', { class: 'rz-big', href },
-        h('span', { class: 'rz-big-img' }, img),
-        h('span', { class: 'rz-big-b' }, h('span', { class: 'rz-d8 rz-dim' }, kind), h('span', { class: 'rz-d rz-big-t' }, txt($('.b-content__inline_item-link a', first))),
-          h('span', { class: 'rz-dim' }, txt($('.b-content__inline_item-link div', first))), rates));
-      loadBig(href).then((i) => {
-        if (i.img) img.src = i.img;
-        rates.replaceChildren(...[i.imdb && h('span', {}, h('b', { class: 'rz-d' }, i.imdb), ' IMDb'), i.kp && h('span', {}, h('b', { class: 'rz-d' }, i.kp), ' Кинопоиск')].filter(Boolean));
-      });
-    }
-    wall.replaceChildren(...[big, ...rest.map((it) => it.cloneNode(true))].filter(Boolean));
+    wall.replaceChildren(...tiles(items, per, page));
+    tiles(items, per, page + 1); tiles(items, per, page - 1); // warm up the neighbours
     pos.textContent = `${page + 1} / ${pages}`;
     prev.disabled = page === 0; next.disabled = page >= pages - 1;
     const spans = $$('.b-newest_slider__title span[data-id]');
