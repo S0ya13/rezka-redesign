@@ -39,9 +39,8 @@ export const ICON = {
   logout: svg('<path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h11"/>', 20),
   list: svg('<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>', 20),
   keyboard: svg('<rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h.01M9 10h.01M12 10h.01M15 10h.01M18 10h.01M7 14h10"/>', 20),
+  home: svg('<path d="M4 10.5 12 4l8 6.5V20h-5.5v-6h-5v6H4z"/>', 20),
 };
-// the logo mark: a play triangle on a dark plate with film-strip notches
-const MARK = '<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect x="1" y="1" width="28" height="28" rx="3" fill="var(--blk)"/><path d="M12 9v12l9.5-6z" fill="var(--acc)"/><path d="M1 8h3.5M1 15h3.5M1 22h3.5M25.5 8H29M25.5 15H29M25.5 22H29" stroke="var(--acc)" stroke-width="2"/></svg>';
 
 // ===================== Themes =====================
 // [id, name, group, swatch] — the colours themselves live in css/theme.css
@@ -99,8 +98,9 @@ export const shortTitle = (s) => {
 };
 
 // ===================== Modal shell =====================
+const motion = () => !matchMedia('(prefers-reduced-motion: reduce)').matches;
 export const modal = (title, body, { field = true } = {}) => {
-  const close = () => { m.remove(); prev?.focus?.(); };
+  const close = () => { if (m.classList.contains('rz-out')) return; m.classList.add('rz-out'); setTimeout(() => m.remove(), motion() ? 180 : 0); prev?.focus?.(); };
   const prev = document.activeElement;
   const m = h('div', { class: 'rz-modal', role: 'dialog', 'aria-modal': 'true', 'aria-label': title, onclick: (e) => { if (e.target === m) close(); } },
     h('div', { class: 'rz-dlg' },
@@ -108,13 +108,15 @@ export const modal = (title, body, { field = true } = {}) => {
       h('div', { class: 'rz-dlg-b' }, body)));
   m.close = close;
   document.body.append(m);
-  ($('button, input, a', $('.rz-dlg-b', m)) || $('button', m)).focus();
+  // first control of the body; a read-only dialog (hotkeys) takes focus itself instead of ringing its close button
+  const first = $('button, input, a', $('.rz-dlg-b', m)), dlg = $('.rz-dlg', m);
+  if (first) first.focus(); else { dlg.tabIndex = -1; dlg.focus(); }
   return m;
 };
 
 const showKeys = () => modal('Горячие клавиши', h('div', { class: 'rz-keys' },
   [['/', 'Поиск', 'везде'], ['T', 'Кинотеатр: плеер на всю вкладку', 'страница тайтла'], ['Esc', 'Закрыть меню и окна, выйти из кинотеатра', 'везде'],
-    ['← →', '±10 секунд', 'плеер'], ['Пробел', 'Пауза и продолжение', 'плеер'], ['F', 'Полный экран', 'плеер'], ['M', 'Звук вкл/выкл', 'плеер'], ['?', 'Эта подсказка', 'везде']]
+    ['← →', '±10 секунд', 'плеер'], ['↑ ↓', 'Громкость ±10%', 'плеер'], ['Пробел', 'Пауза и продолжение', 'плеер'], ['F', 'Полный экран', 'плеер'], ['M', 'Звук вкл/выкл', 'плеер'], ['?', 'Эта подсказка', 'везде']]
     .map(([k, d, w]) => [h('span', { class: 'rz-kbd' }, k), h('span', {}, d), h('small', {}, w)])));
 
 export const openSettings = async () => {
@@ -151,11 +153,8 @@ const NAV = [['Фильмы', '/films/', 'фильмы'], ['Сериалы', '/s
 const STUDIO = { netflix: 'Netflix', hbo: 'HBO', amazon: 'Amazon', disney: 'Disney', 'apple-tv': 'Apple TV', hulu: 'Hulu', epix: 'Epix' };
 const COUNTRY = /^(Русские|Украинские|Зарубежные)$/;
 
-const currentSection = () => {
-  const crumb = $('.b-content__crumbs a[href]')?.getAttribute('href') || '';
-  const path = isTitle ? (new URL(crumb || here, location.href)).pathname : here;
-  return NAV.find(([, href]) => path.startsWith(href))?.[1];
-};
+// title URLs carry their section too (/series/thriller/…); Rezka's crumbs link only «Главная»
+const currentSection = () => NAV.find(([, href]) => here.startsWith(href))?.[1];
 
 const megaFor = ([name, href, plural]) => {
   const li = $$('#topnav-menu > li').find((l) => $('a', l)?.getAttribute('href') === href);
@@ -175,9 +174,9 @@ const megaFor = ([name, href, plural]) => {
     h('div', { class: 'rz-wrap rz-mega-in' },
       h('div', {},
         h('h3', {}, name), h('div', { class: 'rz-mega-big' }, h('a', { href }, 'Все ' + plural), best ? h('a', { href: best.getAttribute('href') }, 'Лучшие новинки') : null),
-        studios.length ? [h('h3', { style: 'margin-top:22px' }, 'Студии'), h('div', { class: 'rz-mega-big' }, studios.map(([t, u]) => h('a', { href: u }, t)))] : null),
+        studios.length ? [h('h3', { style: 'margin-top:26px' }, 'Студии'), h('div', {}, studios.map(([t, u]) => h('a', { href: u }, t)))] : null),
       h('div', {}, h('h3', {}, 'Жанры'), h('div', { class: 'rz-mega-genres' }, genres.map((a) => h('a', { href: a.getAttribute('href') }, txt(a))))),
-      h('div', {}, countries.length ? [h('h3', {}, 'Страна'), h('div', { class: 'rz-mega-big' }, countries.map((a) => h('a', { href: a.getAttribute('href') }, txt(a))))] : null),
+      h('div', {}, countries.length ? [h('h3', {}, 'Страна'), h('div', {}, countries.map((a) => h('a', { href: a.getAttribute('href') }, txt(a))))] : null),
       selG && selY ? h('form', { class: 'rz-mega-find', onsubmit: (e) => { e.preventDefault(); location.href = g.value + (y.value !== '0' ? y.value + '/' : ''); } },
         h('b', {}, 'Найти лучшие ' + plural), g, y, h('button', { type: 'submit' }, 'Найти')) : null));
 };
@@ -255,13 +254,14 @@ const picker = () => {
   return panel;
 };
 
+const avatar = () => { const src = $('.b-tophead__ava img')?.getAttribute('src'); return h('span', { class: 'rz-ava' }, src ? h('img', { src, alt: '' }) : h('span', { html: ICON.user, style: 'display:grid' })); };
 const profileMenu = () => {
   const panel = h('div', { class: 'rz-panel rz-menu', role: 'menu', hidden: true });
   const link = (sel) => $(sel)?.getAttribute('href');
   if (loggedIn) {
     const histN = txt($('.b-tophead__contwatch .count')) || (txt($('.b-tophead__contwatch')).match(/\d+/) || [''])[0];
     panel.append(
-      h('div', { class: 'rz-menu-who' }, h('span', { class: 'rz-ava', html: ICON.user }), h('span', {}, h('b', {}, 'Профиль'), h('small', {}, 'аккаунт Rezka'))),
+      h('div', { class: 'rz-menu-who' }, avatar(), h('span', {}, h('b', {}, 'Профиль'), h('small', {}, 'аккаунт Rezka'))),
       h('a', { href: '/continue/', role: 'menuitem', html: ICON.clock }, 'История просмотра', histN ? h('span', { class: 'rz-mi-n' }, histN) : null),
       h('a', { href: link('.b-tophead__favs') || '/favorites/', role: 'menuitem', html: ICON.bookmark }, 'Закладки'),
       h('a', { href: link('.b-tophead-settings') || '/settings/', role: 'menuitem', html: ICON.user }, 'Настройки профиля'),
@@ -286,10 +286,19 @@ const profileMenu = () => {
 
 // one open popup at a time; Esc and outside clicks close it
 const popups = new Set();
-const toggler = (btn, panel) => {
+const toggler = (btn, panel, { hover = false } = {}) => {
   popups.add([btn, panel]);
-  const set = (open) => { for (const [b, p] of popups) { const me = p === panel && open; p.hidden = !me; b.setAttribute('aria-expanded', String(me)); } };
-  btn.addEventListener('click', (e) => { e.stopPropagation(); set(panel.hidden); });
+  const set = (open) => {
+    for (const [b, p] of popups) if (p === panel || open) { const me = p === panel && open; p.hidden = !me; b.setAttribute('aria-expanded', String(me)); }
+  };
+  let byHover = false, t;
+  btn.addEventListener('click', (e) => { e.stopPropagation(); if (byHover && !panel.hidden) { byHover = false; return; } byHover = false; set(panel.hidden); });
+  if (hover) {
+    // hover intent: open after a short pause, close after a grace period so the pointer can travel into the panel
+    const enter = (e) => { if (e.pointerType !== 'mouse') return; clearTimeout(t); if (panel.hidden) t = setTimeout(() => { byHover = true; set(true); }, 120); };
+    const leave = (e) => { if (e.pointerType !== 'mouse') return; clearTimeout(t); t = setTimeout(() => set(false), 200); };
+    for (const el of [btn, panel]) { el.addEventListener('pointerenter', enter); el.addEventListener('pointerleave', leave); }
+  }
   return () => set(true);
 };
 const closePopups = () => { for (const [b, p] of popups) { p.hidden = true; b.setAttribute('aria-expanded', 'false'); } };
@@ -304,20 +313,20 @@ const buildHeader = () => {
     const mega = item[2] && megaFor(item);
     if (mega) {
       const b = h('button', { type: 'button', class: href === cur ? 'rz-cur' : null, 'aria-expanded': 'false', 'aria-controls': mega.id }, name, h('span', { html: ICON.chev, style: 'display:grid' }));
-      nav.append(b); megas.push(mega); toggler(b, mega);
+      nav.append(b); megas.push(mega); toggler(b, mega, { hover: true });
     } else nav.append(h('a', { href, class: href === cur ? 'rz-cur' : null, 'aria-current': href === cur ? 'page' : null }, name));
   }
   const pal = picker(), menu = profileMenu();
   const palBtn = h('button', { class: 'rz-ib', type: 'button', 'aria-label': 'Тема и цвет', 'aria-expanded': 'false' }, h('span', { class: 'rz-pdot' }));
   const meBtn = h('button', { class: 'rz-ib', type: 'button', 'aria-label': loggedIn ? 'Меню профиля' : 'Войти или зарегистрироваться', 'aria-expanded': 'false', 'aria-haspopup': 'menu' },
-    h('span', { class: 'rz-ava', html: ICON.user }));
+    avatar());
   shared.openPicker = toggler(palBtn, pal);
   toggler(meBtn, menu);
   for (const p of [pal, menu, ...megas]) p.addEventListener('click', (e) => e.stopPropagation());
   document.addEventListener('click', closePopups);
-  const header = h('header', { id: 'rz-header', class: 'rz-field' },
+  const header = h('header', { id: 'rz-header' },
     h('div', { class: 'rz-wrap rz-hd-in' },
-      h('a', { class: 'rz-logo', href: '/', 'aria-label': 'Rezka, на главную', html: MARK }, h('b', {}, 'REZKA')),
+      h('a', { class: 'rz-ib rz-home', href: '/', 'aria-label': 'Главная', 'aria-current': here === '/' ? 'page' : null, html: ICON.home }),
       nav, h('span', { class: 'rz-grow' }), search.form,
       h('div', { class: 'rz-hd-right' },
         h('a', { class: 'rz-ib', href: '/favorites/', 'aria-label': 'Закладки', html: ICON.bookmark }),
@@ -337,7 +346,6 @@ const buildFooter = () => {
   document.body.append(h('footer', { id: 'rz-footer' },
     h('div', { class: 'rz-wrap' },
       h('div', { class: 'rz-ft-in' },
-        h('a', { class: 'rz-logo', href: '/', 'aria-label': 'Rezka, на главную' }, h('b', {}, 'REZKA')),
         h('nav', { 'aria-label': 'Подвал' }, links.map((a) => h('a', { href: a.getAttribute('href') }, txt(a))))),
       h('div', { class: 'rz-ft-in', style: 'margin-top:24px;justify-content:flex-start' },
         aboutBtn, h('button', { class: 'rz-ftb', type: 'button', onclick: showKeys }, 'Горячие клавиши', h('span', { class: 'rz-kbd' }, '?'))),

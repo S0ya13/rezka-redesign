@@ -184,3 +184,22 @@ html.rz-on body > .page .form-footer { margin: 6px -22px -22px !important; paddi
 html.rz-on body > .page .card-face > .form-footer { margin: 0 !important; padding: 16px 22px 0 !important; }
 html.rz-on body > .page :is(.otp-box, .otp-single) { border-radius: 4px !important; border: 1.5px solid var(--line) !important; background: var(--s2) !important; color: var(--ink) !important; font: 700 22px/1 var(--text) !important; }
 html.rz-on body > .page .otp-icon-wrap { color: var(--ink) !important; background: var(--s2) !important; }
+
+/* ===================== Motion: Rezka flips these with inline display:block / display:none ===================== */
+/* @starting-style plays the entrance whatever shows them; the [style*="none"] state plays the exit, and allow-discrete keeps
+   them on screen until it ends */
+html.rz-on :is(#overlay, #ps-overlay-wrap) { transition: opacity .2s var(--ease), display .2s; transition-behavior: allow-discrete; }
+html.rz-on :is(#overlay, #ps-overlay-wrap)[style*="none"] { opacity: 0 !important; }
+html.rz-on :is(.b-popup, .b-sideactions__fav #user-favorites-holder) { transition: opacity .2s var(--ease), translate .2s var(--ease), scale .2s var(--ease), display .2s; transition-behavior: allow-discrete; }
+html.rz-on .b-popup[style*="none"] { opacity: 0; translate: 0 10px; scale: .98; }
+html.rz-on .b-sideactions__fav #user-favorites-holder[style*="none"] { opacity: 0; translate: 0 -6px; }
+html.rz-on #ps-content > div { transition: translate .2s var(--ease), scale .2s var(--ease); }
+html.rz-on #ps-overlay-wrap[style*="none"] #ps-content > div { translate: 0 10px; scale: .98; }
+@starting-style {
+  html.rz-on :is(#overlay, #ps-overlay-wrap) { opacity: 0 !important; }
+  html.rz-on .b-popup { opacity: 0; translate: 0 10px; scale: .98; }
+  html.rz-on .b-sideactions__fav #user-favorites-holder { opacity: 0; translate: 0 -6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.rz-on :is(#overlay, #ps-overlay-wrap, .b-popup, .b-sideactions__fav #user-favorites-holder, #ps-content > div) { transition: none; animation: none !important; }
+}
