@@ -1,42 +1,97 @@
-/* player.css — ported from design D; owned by app/player.js. Rewrite to the T design (canvas «Раунд 3/4»). */
-/* ===================== Own player controls (player.js) ===================== */
+/* player.css — our controls over Rezka's Playerjs (app/player.js). Design: canvas «Раунд 4» M-Player.
+   The player is always dark; the theme shows only in accents: progress, the chosen menu item, the big button. */
 #oframecdnplayer > [data-rz-hidden] { display: none !important; }
+#oframecdnplayer > [data-rz-subs] { transition: transform .25s var(--ease); }
+#cdnplayer-container.rz-ui-on #oframecdnplayer > [data-rz-subs] { transform: translateY(-84px); }
 html.rz-on #cdnplayer-container { position: relative; }
-.rz-pui { position: absolute; inset: 0; z-index: 20; font-family: var(--rz-text); color: var(--rz-ink); font-variant-numeric: tabular-nums; }
-.rz-pui.rz-playing:not(.rz-awake) { cursor: none; }
-.rz-pplate, .rz-pbig, .rz-pbar, .rz-pmenu { background: rgba(14,12,10,.55); -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.12), inset 0 0 0 1px rgba(255,255,255,.07); }
-.rz-pplate, .rz-pbar { transition: opacity .3s var(--rz-ease), transform .3s var(--rz-ease); }
-.rz-pui.rz-playing:not(.rz-awake) .rz-pplate, .rz-pui.rz-playing:not(.rz-awake) .rz-pbar { opacity: 0; transform: translateY(8px); pointer-events: none; }
-.rz-pplate { position: absolute; left: 20px; top: 20px; display: flex; gap: 12px; align-items: baseline; padding: 10px 16px; border-radius: 14px; font-size: 15px; color: var(--rz-ink2); }
-.rz-pplate[hidden] { display: none; }
-.rz-pse { color: var(--rz-amb); font-size: 13px; font-weight: 600; }
-.rz-pc { width: 44px; height: 44px; padding: 0; border: 0; border-radius: 12px; background: transparent; color: var(--rz-ink); display: grid; place-items: center; cursor: pointer; transition: background .2s var(--rz-ease); flex: 0 0 auto; }
-.rz-pc:hover { background: rgba(255,255,255,.1); }
-.rz-pc[hidden] { display: none; }
-.rz-pbig { position: absolute; left: 50%; top: 50%; width: 92px; height: 92px; margin: -46px 0 0 -46px; border-radius: 50%; transition: opacity .25s var(--rz-ease), transform .25s var(--rz-ease); }
-.rz-pbig svg { width: 34px; height: 34px; margin-left: 4px; }
-.rz-pbig:hover { background: rgba(14,12,10,.7); transform: scale(1.05); }
-.rz-pui.rz-playing .rz-pbig { opacity: 0; transform: scale(.85); pointer-events: none; }
-.rz-pbar { position: absolute; left: 20px; right: 20px; bottom: 20px; display: flex; flex-direction: column; gap: 8px; padding: 14px 12px 8px; border-radius: 18px; }
-.rz-pline { --p: 0; --b: 0; position: relative; height: 5px; margin: 0 6px; border-radius: 3px; background: rgba(243,236,226,.18); cursor: pointer; touch-action: none; transition: height .15s; }
-.rz-pline::after { content: ''; position: absolute; inset: -9px 0; }
-.rz-pline:hover { height: 7px; }
-.rz-pbuf, .rz-pdone { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; }
-.rz-pbuf { width: calc(var(--b) * 100%); background: rgba(243,236,226,.22); }
-.rz-pdone { width: calc(var(--p) * 100%); background: var(--rz-amb); }
-.rz-pknob { position: absolute; top: 50%; left: calc(var(--p) * 100%); width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: var(--rz-amb); box-shadow: 0 2px 6px rgba(0,0,0,.5); }
-.rz-ptip { position: absolute; bottom: 16px; transform: translateX(-50%); padding: 4px 8px; border-radius: 8px; background: var(--rz-ink); color: var(--rz-bg); font-size: 12px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity .15s; }
-.rz-pline:hover .rz-ptip { opacity: 1; }
-.rz-prow { display: flex; align-items: center; gap: 2px; font-size: 14px; }
-.rz-pgrow { flex: 1; }
-.rz-ptime { margin-left: 8px; color: var(--rz-ink2); white-space: nowrap; }
-.rz-ptime b { color: var(--rz-ink); font-weight: 600; }
-.rz-pvol { width: 84px; accent-color: var(--rz-amb); cursor: pointer; }
-.rz-pq { width: auto; height: 30px; padding: 0 10px; margin-right: 4px; border-radius: 8px; background: rgba(255,255,255,.1); font: 600 13px var(--rz-text); }
-.rz-pmenu { position: absolute; right: 20px; bottom: 100px; z-index: 2; min-width: 180px; max-height: 60%; overflow: auto; padding: 6px; border-radius: 16px; display: flex; flex-direction: column; }
-.rz-pmenu[hidden] { display: none; }
-.rz-pmi { height: 40px; padding: 0 14px; border: 0; border-radius: 10px; background: transparent; color: var(--rz-ink2); font: 500 14px var(--rz-text); text-align: left; cursor: pointer; }
-.rz-pmi:hover { background: rgba(255,255,255,.08); color: var(--rz-ink); }
-.rz-pmi.on { color: var(--rz-amb); font-weight: 700; }
+#cdnplayer-container.rz-fs { border-radius: 0 !important; }
 
+.rz-pui { position: absolute; inset: 0; z-index: 20; color: #EEF0F8; font-family: var(--text); font-variant-numeric: tabular-nums; -webkit-user-select: none; user-select: none; }
+.rz-pui [hidden] { display: none !important; }
+.rz-pui button { font: inherit; color: inherit; background: none; border: 0; padding: 0; margin: 0; cursor: pointer; }
+.rz-pui :focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+.rz-pui.rz-playing:not(.rz-awake) { cursor: none; }
+.rz-pscrim { position: absolute; left: 0; right: 0; bottom: 0; height: 46%; background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,.86)); pointer-events: none; transition: opacity .3s var(--ease); }
+.rz-pplate, .rz-pctl, .rz-pscrim { transition: opacity .3s var(--ease), transform .3s var(--ease); }
+.rz-pui.rz-playing:not(.rz-awake) :is(.rz-pplate, .rz-pctl, .rz-pscrim) { opacity: 0; pointer-events: none; }
+.rz-pui.rz-playing:not(.rz-awake) .rz-pctl { transform: translateY(8px); }
+
+/* top plate: «5 сезон · 14 серия · Дубляж» + episode name */
+.rz-pplate { position: absolute; top: 14px; left: 14px; z-index: 3; display: flex; align-items: center; gap: 10px; max-width: calc(100% - 28px); box-sizing: border-box; padding: 8px 12px; border-radius: 4px; background: rgba(10,10,10,.78); }
+.rz-pd { font: 900 22px/1 var(--disp); text-transform: uppercase; letter-spacing: -.01em; color: var(--acc); white-space: nowrap; }
+.rz-pplate span:last-child:not(.rz-pd) { font: 400 13px/1.2 var(--text); color: #C3C7DA; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* big play: a square of the theme's field */
+.rz-pb.rz-pbig { position: absolute; left: 50%; top: 50%; z-index: 3; width: 96px; height: 96px; margin: -48px 0 0 -48px; display: grid; place-items: center; border-radius: 6px;
+  background: var(--field) !important; color: var(--on-sig) !important; box-shadow: 0 16px 40px -16px rgba(0,0,0,.7); transition: opacity .25s var(--ease), transform .25s var(--ease); }
+.rz-pbig svg { margin-left: 4px; }
+.rz-pb.rz-pbig:hover { background: var(--field-h) !important; transform: scale(1.04); }
+.rz-pui.rz-playing .rz-pbig { opacity: 0; transform: scale(.85); pointer-events: none; }
+.rz-pspin { position: absolute; left: 50%; top: 50%; z-index: 3; width: 64px; height: 64px; margin: -32px 0 0 -32px; box-sizing: border-box; border-radius: 50%;
+  border: 5px solid rgba(255,255,255,.18); border-top-color: var(--acc); animation: rz-pspin 1s linear infinite; pointer-events: none; }
+@keyframes rz-pspin { to { transform: rotate(360deg); } }
+
+/* bottom: seek line over the button row */
+.rz-pctl { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; display: flex; flex-direction: column; gap: 6px; padding: 0 16px 12px; }
+.rz-pseek { padding: 8px 0; }
+.rz-pline { --p: 0; --b: 0; --h: 0; position: relative; height: 6px; border-radius: 3px; background: rgba(245,245,240,.22); cursor: pointer; touch-action: none; transition: height .15s; }
+.rz-pline::after { content: ''; position: absolute; inset: -10px 0; }
+.rz-pline:hover { height: 8px; }
+.rz-pbuf, .rz-pdone { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; }
+.rz-pbuf { width: calc(var(--b) * 100%); background: rgba(245,245,240,.38); }
+.rz-pdone { width: calc(var(--p) * 100%); background: var(--acc); }
+.rz-pknob { position: absolute; top: 50%; left: calc(var(--p) * 100%); width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: var(--acc); box-shadow: 0 2px 6px rgba(0,0,0,.5); }
+.rz-phov { position: absolute; top: -2px; bottom: -2px; left: calc(var(--h) * 100%); width: 2px; background: #EEF0F8; opacity: 0; pointer-events: none; }
+.rz-ptip { position: absolute; bottom: 18px; left: calc(var(--h) * 100%); transform: translateX(-50%); padding: 5px 8px; border-radius: 3px; background: #EEF0F8; color: #0A0A0A;
+  font: 900 18px/1 var(--disp); opacity: 0; pointer-events: none; white-space: nowrap; }
+.rz-pline:hover .rz-phov, .rz-pline:hover .rz-ptip:not(:empty) { opacity: 1; }
+.rz-pbar { display: flex; align-items: center; gap: 2px; }
+.rz-pb { position: relative; flex: none; width: 44px; height: 44px; display: inline-grid !important; place-items: center; border-radius: 4px; color: #EEF0F8 !important; transition: background .2s var(--ease); }
+.rz-pb:hover { background: rgba(245,245,240,.14) !important; }
+.rz-pb.on, .rz-pb.rz-act { color: var(--acc) !important; }
+.rz-pb.rz-off { opacity: .4; cursor: default; }
+.rz-pb.rz-off:hover { background: none !important; }
+.rz-pvol { width: 84px; margin: 0 6px 0 2px; accent-color: var(--acc); cursor: pointer; }
+.rz-ptime { margin-left: 10px; font: 900 20px/1 var(--disp); letter-spacing: .02em; white-space: nowrap; }
+.rz-ptime span { color: #9399B3; }
+.rz-pgrow { flex: 1; }
+.rz-pb.rz-pql { width: auto; min-width: 48px; padding: 0 6px; font: 800 15px/1 var(--disp) !important; text-transform: uppercase; letter-spacing: .02em; color: #C3C7DA !important; }
+.rz-ptipc { position: absolute; right: 200px; bottom: 84px; z-index: 4; padding: 8px 10px; border-radius: 4px; background: #EEF0F8; color: #0A0A0A; font: 600 13px/1.3 var(--text); white-space: nowrap; pointer-events: none; }
+
+/* menus: gear → three columns; quality label and CC → one column */
+.rz-pm { position: absolute; right: 16px; bottom: 84px; z-index: 5; width: 540px; max-width: calc(100% - 32px); max-height: calc(100% - 110px); overflow: auto; box-sizing: border-box; padding: 16px; border-radius: 6px;
+  background: rgba(14,14,14,.96); display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 16px; }
+.rz-pm.rz-one { width: 220px; grid-template-columns: 1fr; gap: 0; padding: 10px; }
+.rz-pm h4 { margin: 0 0 8px; font: 800 16px/1 var(--disp); text-transform: uppercase; letter-spacing: .08em; color: #9399B3; }
+.rz-pm.rz-one h4 { padding: 6px 10px 0; }
+.rz-pm button { display: flex; justify-content: space-between; align-items: center; width: 100%; height: 40px; padding: 0 10px; border-radius: 4px; color: #C3C7DA; font: 500 15px/1 var(--text); text-align: left; }
+.rz-pm button:hover { background: rgba(245,245,240,.08); color: #EEF0F8; }
+.rz-pm button.on { background: var(--field); color: var(--on-sig); font-weight: 700; }
+.rz-pm button.dis { opacity: .45; cursor: default; }
+.rz-pm button.dis:hover { background: none; color: #C3C7DA; }
+
+/* end of an episode */
+.rz-pnext { position: absolute; right: 14px; bottom: 84px; z-index: 5; width: 320px; box-sizing: border-box; padding: 14px; border-radius: 6px; background: rgba(14,14,14,.94); display: flex; flex-direction: column; gap: 10px; }
+.rz-pcap { font: 800 15px/1 var(--disp); text-transform: uppercase; letter-spacing: .06em; color: #9399B3; }
+.rz-pnx { display: flex; gap: 12px; align-items: center; }
+.rz-pnx .rz-pd { display: block; font-size: 26px; color: #EEF0F8; white-space: normal; }
+.rz-pnx small { font: 400 13px/1.3 var(--text); color: #C3C7DA; }
+.rz-pring { --k: 0; flex: none; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
+  background: conic-gradient(var(--acc) 0 calc(var(--k) * 100%), rgba(255,255,255,.18) calc(var(--k) * 100%) 100%); transition: background .9s linear; }
+.rz-pring b { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: #0E0E0E; font: 900 20px/1 var(--disp); }
+
+/* messages over the picture (error) */
+.rz-pmsg { position: absolute; inset: 0; z-index: 6; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 24px; text-align: center; background: rgba(5,6,12,.72); }
+.rz-pmsg h3 { margin: 0; font: 900 34px/.9 var(--disp); text-transform: uppercase; color: #EEF0F8; }
+.rz-pmsg p { margin: 0; max-width: 420px; font: 400 15px/1.45 var(--text); color: #C3C7DA; }
+.rz-pic { color: var(--acc); }
+.rz-pbtns { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.rz-pnext .rz-pbtns { justify-content: flex-start; }
+.rz-pbtn { display: inline-flex !important; align-items: center; gap: 8px; height: 40px; padding: 0 14px !important; border-radius: 4px; font: 800 17px/1 var(--disp) !important; text-transform: uppercase; letter-spacing: .03em; }
+.rz-pbtn.rz-y { background: var(--field) !important; color: var(--on-sig) !important; }
+.rz-pbtn.rz-y:hover { background: var(--field-h) !important; }
+.rz-pbtn.rz-o { box-shadow: inset 0 0 0 2px #EEF0F8; color: #EEF0F8 !important; }
+.rz-pbtn.rz-o:hover { background: #EEF0F8 !important; color: #0A0A0A !important; }
+.rz-pfsx { position: absolute; top: 14px; right: 14px; z-index: 3; padding: 8px 12px; border-radius: 4px; background: rgba(10,10,10,.78); font: 600 13px/1 var(--text); color: #C3C7DA; }
+
+@media (prefers-reduced-motion: reduce) { .rz-pspin { animation-duration: 3s; } .rz-pring { transition: none; } }
