@@ -302,10 +302,16 @@
 
   // ---------- panel visibility; subtitles move up while the panel is shown ----------
   let idle;
-  const hideLater = () => { clearTimeout(idle); idle = setTimeout(() => { if (api('playing') && !menuKind && !ui.contains(document.activeElement)) setAwake(false); }, 2600); };
+  // a mouse click leaves focus on the button; only keyboard focus needs the panel to stay
+  const hideLater = () => { clearTimeout(idle); idle = setTimeout(() => { if (api('playing') && !menuKind && !ui.querySelector(':focus-visible')) setAwake(false); }, 2600); };
   const setAwake = (on) => { ui.classList.toggle('rz-awake', on); };
   const wake = () => { setAwake(true); hideLater(); };
-  holder.addEventListener('mousemove', wake);
+  // the left and right 15% of the picture (above the control bar) hide the panel at once instead of waking it
+  holder.addEventListener('mousemove', (e) => {
+    const r = holder.getBoundingClientRect(), x = (e.clientX - r.left) / r.width;
+    const edge = (x < 0.15 || x > 0.85) && e.clientY < r.bottom - ctl.offsetHeight; // the hidden bar takes no events, so test by position
+    if (edge && api('playing') && !menuKind) { clearTimeout(idle); setAwake(false); } else wake();
+  });
   holder.addEventListener('mouseleave', () => { if (api('playing') && !menuKind) setAwake(false); });
   ui.addEventListener('focusin', wake);
 
