@@ -5,7 +5,7 @@ import { init, here, isTitle, root } from './core.js';
 const pageModule = () => {
   if (isTitle) return 'title';
   if (here === '/' || /^\/page\/\d+\/?$/.test(here)) return 'home';
-  if (/^\/(continue|favorites|settings)\//.test(here)) return 'account';
+  if (/^\/(continue|favorites|settings|user)\//.test(here)) return 'account'; // /settings/ redirects to /user/<id>/…
   return 'lists'; // catalogues, genres, «Новинки», search, announce, collections, person pages
 };
 

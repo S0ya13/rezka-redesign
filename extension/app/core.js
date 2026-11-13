@@ -21,7 +21,7 @@ export const post = (url, body) => fetch(url, { method: 'POST', credentials: 'in
 export const root = document.documentElement;
 export const here = location.pathname;
 export const loggedIn = ($('#member_user_id')?.value || '0') !== '0';
-export const isTitle = !!$('.b-post__title') && !!$('.b-post__info');
+export const isTitle = !!$('.b-post__title') && !!$('.b-post__info') && !here.startsWith('/person/'); // person pages reuse Rezka's post markup
 export const samePage = (href) => { try { return new URL(href, location.href).pathname === location.pathname; } catch { return false; } };
 
 const svg = (d, w = 22, extra = '') => `<svg width="${w}" height="${w}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${extra}>${d}</svg>`;
@@ -330,7 +330,7 @@ const buildHeader = () => {
 
 const buildFooter = () => {
   const links = $$('#footer a').filter((a) => txt(a) && !/hdrezka|rezka\./i.test(txt(a)));
-  const seo = $('.b-content__description');
+  const seo = $('.b-content__description') || $('.b-content__section_description');
   const about = seo ? h('div', { class: 'rz-about', id: 'rz-about', hidden: true }, seo) : null;
   const aboutBtn = about && h('button', { class: 'rz-ftb', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'rz-about',
     onclick: () => { about.hidden = !about.hidden; aboutBtn.setAttribute('aria-expanded', String(!about.hidden)); } }, 'О разделе', h('span', { html: ICON.chev, style: 'display:grid' }));
