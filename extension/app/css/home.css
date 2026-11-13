@@ -1,0 +1,36 @@
+/* home.css — ported from design D; owned by app/home.js. Rewrite to the T design (canvas «Раунд 3/4»). */
+.b-newest_slider .b-content__inline_item { width: 150px !important; margin-right: 18px !important; }
+.b-newest_slider .b-content__inline_item-link { margin-top: 10px; }
+.b-newest_slider_wrapper, .b-newest_slider, .b-newest_slider__list, .b-collections__newest { background: none !important; }
+.b-newest_slider_wrapper { padding-top: 40px; }
+.b-newest_slider .b-content__inline_item-link a { color: var(--rz-ink) !important; }
+.b-newest_slider__prev, .b-newest_slider__next, [class*=b-newest_slider__arr] { background: var(--rz-s1) !important; border-radius: 999px !important; }
+html.rz-list .b-content__htitle.small { margin: 0 0 8px !important; color: var(--rz-ink) !important; font: 500 20px var(--rz-disp) !important; text-transform: uppercase; letter-spacing: .05em; }
+.b-newest_slider__title { font: 500 22px var(--rz-disp) !important; text-transform: uppercase; letter-spacing: .05em; color: var(--rz-ink) !important; }
+.b-newest_slider__title a { color: inherit !important; }
+.b-collections__newest a { border-radius: 22px !important; overflow: hidden; font-family: var(--rz-disp) !important; }
+.b-seriesupdate__block_date { display: flex; justify-content: space-between; padding: 14px 4px !important; background: none !important; color: var(--rz-ink) !important; font: 600 16px var(--rz-text) !important; border: 0 !important; box-shadow: 0 1px 0 var(--rz-hair); }
+.b-seriesupdate__block_list_item { padding: 10px 12px !important; border-radius: 12px; background: none !important; border: 0 !important; }
+.b-seriesupdate__block_list_item:hover { background: var(--rz-s1) !important; }
+.b-seriesupdate__block_list_link { color: var(--rz-ink) !important; font: 500 15px var(--rz-text) !important; }
+.b-seriesupdate__block_list_item .season, .b-seriesupdate__block_list_item .cell-2 i { color: var(--rz-ink3) !important; }
+.b-seriesupdate__block_list_item .cell-2 { color: var(--rz-ink2) !important; }
+/* ===================== "Продолжить" CTA / continue row ===================== */
+.rz-cont { padding-top: 40px; }
+.rz-sechead { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 18px; }
+.rz-link { color: var(--rz-ink2) !important; font-size: 14px; text-decoration: underline; text-decoration-color: rgba(243,236,226,.16); text-underline-offset: 4px; }
+.rz-link:hover { color: var(--rz-ink) !important; text-decoration-color: var(--rz-amb); }
+.rz-contgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; }
+.rz-contcard { display: flex; gap: 14px; padding: 10px; border-radius: 20px; background: var(--rz-s1); box-shadow: inset 0 0 0 1px var(--rz-hair); color: var(--rz-ink) !important; text-decoration: none !important; font-family: var(--rz-text); transition: background .25s var(--rz-ease); }
+.rz-contcard:hover { background: var(--rz-s2); }
+.rz-contcard img { width: 72px; height: 108px; object-fit: cover; border-radius: 10px; flex: 0 0 auto; }
+.rz-contbody { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 4px; font-size: 14px; color: var(--rz-ink2); }
+.rz-contbody b { color: var(--rz-ink); font-size: 16px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rz-contmore { color: var(--rz-amb); font-size: 13px; font-weight: 600; }
+
+
+.b-seriesupdate__block_list_item_inner { display: flex !important; flex-direction: column; gap: 2px; }
+.b-seriesupdate__block_list_item .cell { display: block !important; float: none !important; width: auto !important; padding: 0 !important; text-align: left !important; white-space: normal !important; }
+.b-seriesupdate__block_list_item .cell-2 { font: 13px/1.4 var(--rz-text) !important; color: var(--rz-ink2) !important; }
+.b-seriesupdate__block_list_item .cell-2 i { font-style: normal; color: var(--rz-ink3) !important; }
+.b-seriesupdate__block_list_item .cell-2 i { display: inline !important; }

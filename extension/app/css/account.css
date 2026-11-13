@@ -1,0 +1,45 @@
+/* account.css — ported from design D; owned by app/account.js. Rewrite to the T design (canvas «Раунд 3/4»). */
+/* ===================== Bookmarks / history ===================== */
+.rz-switch { display: inline-flex; gap: 2px; padding: 4px; margin: -12px 0 28px; border-radius: 999px; background: var(--rz-s1); box-shadow: inset 0 0 0 1px var(--rz-hair); font-family: var(--rz-text); }
+.rz-switch a { height: 38px; padding: 0 16px; display: inline-flex; align-items: center; border-radius: 999px; color: var(--rz-ink2) !important; font-size: 14px; font-weight: 500; text-decoration: none !important; }
+.rz-switch a[aria-current] { background: var(--rz-ink); color: var(--rz-bg) !important; font-weight: 600; }
+html.rz-list .b-favorites_content__sidebar { position: absolute !important; right: 0; top: 0; width: 320px !important; float: none !important; margin: 0 !important; }
+html.rz-list .b-content__inline_inner:has(.b-favorites_content__sidebar) { padding-right: 360px !important; }
+.b-favorites_content__cats_nolist, .b-favorites_content__cats_list { padding: 18px !important; border-radius: 20px; background: var(--rz-s1) !important; box-shadow: inset 0 0 0 1px var(--rz-hair); color: var(--rz-ink2) !important; font: 14px/1.6 var(--rz-text) !important; border: 0 !important; }
+.b-favorites_content__cats_nolist .title { display: block; margin-bottom: 6px; color: var(--rz-ink) !important; font: 600 15px var(--rz-text) !important; text-transform: none !important; }
+.b-favorites_content__cats_list_item { border-radius: 12px; }
+.b-favorites_content__cats_list_item a { color: var(--rz-ink2) !important; }
+.b-favorites_content__cats_list_item.active a, .b-favorites_content__cats_list_item a:hover { color: var(--rz-ink) !important; }
+.b-userset__fav_holder_data a, .b-favorites_content__sidebar a { color: var(--rz-ink2) !important; }
+html.rz-list .b-info__message, html.rz-list .b-info__message * { color: var(--rz-ink3) !important; background: none !important; border: 0 !important; font-family: var(--rz-text) !important; }
+#videosaves-list { border: 0 !important; background: none !important; font-family: var(--rz-text); }
+#videosaves-list .b-videosaves__list_item { display: grid !important; grid-template-columns: minmax(0,1fr) 300px 110px 90px; align-items: center; gap: 20px; padding: 12px 14px !important; margin: 0 -14px; border: 0 !important; border-radius: 16px; background: none !important; }
+#videosaves-list .b-videosaves__list_item:hover { background: var(--rz-s1) !important; }
+#videosaves-list .b-videosaves__list_item > div { border: 0 !important; padding: 0 !important; background: none !important; float: none !important; width: auto !important; text-align: left !important; }
+#videosaves-list .b-videosaves__list_item:first-child { display: none !important; }
+#videosaves-list .td.date { order: 3; color: var(--rz-ink3) !important; font-size: 13px; }
+#videosaves-list .td.title { order: 1; display: grid !important; grid-template-columns: 56px minmax(0,1fr); column-gap: 16px; align-items: center; }
+#videosaves-list .td.title a { color: var(--rz-ink) !important; font-weight: 600; font-size: 16px; text-decoration: none !important; }
+#videosaves-list .td.title small { grid-column: 2; color: var(--rz-ink3) !important; font-size: 13px; }
+#videosaves-list .td.title small b { color: var(--rz-ink3) !important; font-weight: 500; }
+.rz-hcover { grid-row: 1 / span 2; width: 56px; height: 84px; object-fit: cover; border-radius: 10px; }
+#videosaves-list .td.info { order: 2; color: var(--rz-ink2) !important; font-size: 14px; }
+#videosaves-list .td.info .info-holder br { display: none; }
+#videosaves-list .td.info a.new-episode { display: inline-block; margin-top: 6px; padding: 4px 10px; border-radius: 999px; background: rgba(242,169,59,.14) !important; color: var(--rz-amb) !important; font-size: 13px; font-weight: 600; text-decoration: none !important; }
+#videosaves-list .td.info a.new-episode b { color: inherit !important; }
+#videosaves-list .td.controls { order: 4; }
+#videosaves-list .controls-holder { display: flex; gap: 4px; justify-content: flex-end; }
+#videosaves-list .controls-holder a { width: 36px; height: 36px; border-radius: 50%; background-color: rgba(255,255,255,.06) !important; opacity: .85; }
+
+html.rz-list .b-info__title { color: var(--rz-ink2) !important; font: 600 15px var(--rz-text) !important; }
+#videosaves-list .td.title { align-content: center; row-gap: 4px; }
+#videosaves-list .td.title { grid-template-rows: min-content min-content !important; align-content: center !important; }
+#videosaves-list .controls-holder a { background: rgba(255,255,255,.06) center / 18px no-repeat !important; opacity: 1; transition: background-color .2s; }
+#videosaves-list .controls-holder a:hover { background-color: rgba(255,255,255,.12) !important; }
+#videosaves-list .controls-holder a.view { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23CBBFAF' stroke-width='1.7'%3E%3Cpath d='M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E") !important; }
+#videosaves-list .controls-holder a.delete { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23CBBFAF' stroke-width='1.8' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6 6 18'/%3E%3C/svg%3E") !important; }
+#videosaves-list .td.title { grid-template-rows: 1fr auto auto 1fr !important; }
+#videosaves-list .td.title > a { grid-row: 2; grid-column: 2; }
+#videosaves-list .td.title > small { grid-row: 3; }
+#videosaves-list .rz-hcover { grid-row: 1 / span 4; }
+#videosaves-list .controls-holder { visibility: visible !important; }

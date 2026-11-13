@@ -1,0 +1,49 @@
+/* Themes: mode (html.t-dark / html.t-light, set by boot.js) x colour (html.p-<id>).
+   Palettes mirror the design canvas «Раунд 3 · темы»; edit them here and in PALETTES (app/core.js). */
+html { --sig: #3A4A8A; --on-sig: #FFFFFF; --on-sig2: rgba(255,255,255,.9); --acc: #F2B48C;
+  --field: color-mix(in srgb, #3A4A8A var(--fa), transparent); --field-h: var(--field); --sw: #3A4A8A;
+  --glass: blur(28px) saturate(170%);
+  --disp: 'Sofia Sans Extra Condensed', 'Arial Narrow', sans-serif; --text: 'Sofia Sans', system-ui, sans-serif;
+  --ease: cubic-bezier(.2,.8,.2,1);
+  /* legacy names still used by styles not yet ported */
+  --rz-bg: var(--bg); --rz-s1: var(--s1); --rz-s2: var(--s2); --rz-s3: var(--s2); --rz-hair: var(--line); --rz-hair2: var(--line);
+  --rz-ink: var(--ink); --rz-ink2: var(--ink2); --rz-ink3: var(--ink3); --rz-amb: var(--acc); --rz-on: var(--bg); --rz-ok: var(--acc);
+  --rz-ease: var(--ease); --rz-disp: var(--disp); --rz-text: var(--text); }
+html.t-dark{--fa:84%;--blk:rgba(8,10,20,.62);--blk-h:rgba(255,255,255,.08);--s1:rgba(20,22,34,.55);--s2:rgba(255,255,255,.06);--line:rgba(255,255,255,.11);--ink:#EEF0F8;--ink2:#C3C7DA;--ink3:#959BB0;--hover:rgba(255,255,255,.06);--rim:rgba(255,255,255,.16);--sh:0 18px 44px -18px rgba(0,0,0,.8);--pop:rgba(16,18,30,.94)}
+html.t-light{--fa:94%;--blk:rgba(10,12,24,.64);--blk-h:rgba(10,12,24,.8);--s1:rgba(255,255,255,.6);--s2:rgba(15,18,34,.05);--line:rgba(15,18,34,.12);--ink:#0F1222;--ink2:#393E55;--ink3:#585E76;--hover:rgba(15,18,34,.05);--rim:rgba(255,255,255,.85);--sh:0 14px 34px -16px rgba(14,16,30,.28);--pop:rgba(255,255,255,.95)}
+html.p-sumerki{--sig:#3A4A8A;--field:color-mix(in srgb, #3A4A8A var(--fa), transparent);--field-h:color-mix(in srgb, #56639A var(--fa), transparent);--on-sig:#FFFFFF;--on-sig2:rgba(255,255,255,.9);--acc:#F2B48C;--sw:#3A4A8A}
+html.t-dark.p-sumerki{--bg:#0B0D16;--b1:rgba(58,74,138,0.46);--b2:rgba(242,180,140,0.2);--b3:rgba(117,128,173,0.2);--b4:rgba(242,180,140,0.12)}
+html.t-light.p-sumerki{--bg:#E7E9F0;--b1:rgba(58,74,138,0.3);--b2:rgba(242,180,140,0.26);--b3:rgba(117,128,173,0.22);--b4:rgba(242,180,140,0.3)}
+html.p-kobalt{--sig:#2B4AE0;--field:color-mix(in srgb, #2B4AE0 var(--fa), transparent);--field-h:color-mix(in srgb, #4963E4 var(--fa), transparent);--on-sig:#FFFFFF;--on-sig2:rgba(255,255,255,.9);--acc:#A9BCFF;--sw:#2B4AE0}
+html.t-dark.p-kobalt{--bg:#0A0D1C;--b1:rgba(43,74,224,0.46);--b2:rgba(169,188,255,0.2);--b3:rgba(107,128,233,0.2);--b4:rgba(169,188,255,0.12)}
+html.t-light.p-kobalt{--bg:#E6E9F6;--b1:rgba(43,74,224,0.3);--b2:rgba(169,188,255,0.26);--b3:rgba(107,128,233,0.22);--b4:rgba(169,188,255,0.3)}
+html.p-nefrit{--sig:#0B7A62;--field:color-mix(in srgb, #0B7A62 var(--fa), transparent);--field-h:color-mix(in srgb, #2D8D78 var(--fa), transparent);--on-sig:#FFFFFF;--on-sig2:rgba(255,255,255,.9);--acc:#7FE0C3;--sw:#0B7A62}
+html.t-dark.p-nefrit{--bg:#071013;--b1:rgba(11,122,98,0.46);--b2:rgba(127,224,195,0.2);--b3:rgba(84,162,145,0.2);--b4:rgba(127,224,195,0.12)}
+html.t-light.p-nefrit{--bg:#E4ECEE;--b1:rgba(11,122,98,0.3);--b2:rgba(127,224,195,0.26);--b3:rgba(84,162,145,0.22);--b4:rgba(127,224,195,0.3)}
+html.p-iris{--sig:#6A45F0;--field:color-mix(in srgb, #6A45F0 var(--fa), transparent);--field-h:color-mix(in srgb, #7F5FF2 var(--fa), transparent);--on-sig:#FFFFFF;--on-sig2:rgba(255,255,255,.9);--acc:#C9BCFF;--sw:#6A45F0}
+html.t-dark.p-iris{--bg:#0E0C1D;--b1:rgba(106,69,240,0.46);--b2:rgba(201,188,255,0.2);--b3:rgba(151,125,244,0.2);--b4:rgba(201,188,255,0.12)}
+html.t-light.p-iris{--bg:#EAE9F7;--b1:rgba(106,69,240,0.3);--b2:rgba(201,188,255,0.26);--b3:rgba(151,125,244,0.22);--b4:rgba(201,188,255,0.3)}
+html.p-barhat{--sig:#7A2434;--field:color-mix(in srgb, #7A2434 var(--fa), transparent);--field-h:color-mix(in srgb, #8D4350 var(--fa), transparent);--on-sig:#FFFFFF;--on-sig2:rgba(255,255,255,.9);--acc:#E2B86E;--sw:#7A2434}
+html.t-dark.p-barhat{--bg:#0F0A10;--b1:rgba(122,36,52,0.46);--b2:rgba(226,184,110,0.2);--b3:rgba(162,102,113,0.2);--b4:rgba(226,184,110,0.12)}
+html.t-light.p-barhat{--bg:#EBE7EB;--b1:rgba(122,36,52,0.3);--b2:rgba(226,184,110,0.26);--b3:rgba(162,102,113,0.22);--b4:rgba(226,184,110,0.3)}
+html.p-ohra{--sig:#C8923A;--field:color-mix(in srgb, #C8923A var(--fa), transparent);--field-h:color-mix(in srgb, #D0A156 var(--fa), transparent);--on-sig:#1E1608;--on-sig2:#3F2E0E;--acc:#E6B35C;--sw:#C8923A}
+html.t-dark.p-ohra{--bg:#151210;--b1:rgba(200,146,58,0.46);--b2:rgba(230,179,92,0.2);--b3:rgba(216,179,117,0.2);--b4:rgba(230,179,92,0.12)}
+html.t-light.p-ohra{--bg:#EFEDEC;--b1:rgba(200,146,58,0.3);--b2:rgba(230,179,92,0.26);--b3:rgba(216,179,117,0.22);--b4:rgba(230,179,92,0.3)}
+html.p-zakat{--sig:#4F46E5;--field:linear-gradient(90deg,color-mix(in srgb, #4F46E5 var(--fa), transparent),color-mix(in srgb, #C93A4F var(--fa), transparent));--field-h:linear-gradient(90deg,color-mix(in srgb, #6860E9 var(--fa), transparent),color-mix(in srgb, #D15668 var(--fa), transparent));--on-sig:#FFFFFF;--on-sig2:rgba(255,255,255,.9);--acc:#FFB3A6;--sw:linear-gradient(135deg,#4F46E5,#C93A4F)}
+html.t-dark.p-zakat{--bg:#0C0C1C;--b1:rgba(79,70,229,0.46);--b2:rgba(201,58,79,0.2);--b3:rgba(132,126,237,0.2);--b4:rgba(255,179,166,0.12)}
+html.t-light.p-zakat{--bg:#E8E9F6;--b1:rgba(79,70,229,0.3);--b2:rgba(201,58,79,0.26);--b3:rgba(132,126,237,0.22);--b4:rgba(255,179,166,0.3)}
+html.p-laguna{--sig:#0F766E;--field:linear-gradient(90deg,color-mix(in srgb, #0F766E var(--fa), transparent),color-mix(in srgb, #2563EB var(--fa), transparent));--field-h:linear-gradient(90deg,color-mix(in srgb, #318982 var(--fa), transparent),color-mix(in srgb, #4479EE var(--fa), transparent));--on-sig:#FFFFFF;--on-sig2:rgba(255,255,255,.9);--acc:#7DE6F5;--sw:linear-gradient(135deg,#0F766E,#2563EB)}
+html.t-dark.p-laguna{--bg:#081014;--b1:rgba(15,118,110,0.46);--b2:rgba(37,99,235,0.2);--b3:rgba(87,159,154,0.2);--b4:rgba(125,230,245,0.12)}
+html.t-light.p-laguna{--bg:#E4ECEF;--b1:rgba(15,118,110,0.3);--b2:rgba(37,99,235,0.26);--b3:rgba(87,159,154,0.22);--b4:rgba(125,230,245,0.3)}
+html.p-sorbet{--sig:#C2410C;--field:linear-gradient(90deg,color-mix(in srgb, #C2410C var(--fa), transparent),color-mix(in srgb, #BE185D var(--fa), transparent));--field-h:linear-gradient(90deg,color-mix(in srgb, #CB5C2E var(--fa), transparent),color-mix(in srgb, #C73874 var(--fa), transparent));--on-sig:#FFFFFF;--on-sig2:rgba(255,255,255,.9);--acc:#FDBA74;--sw:linear-gradient(135deg,#C2410C,#BE185D)}
+html.t-dark.p-sorbet{--bg:#140C0D;--b1:rgba(194,65,12,0.46);--b2:rgba(190,24,93,0.2);--b3:rgba(212,122,85,0.2);--b4:rgba(253,186,116,0.12)}
+html.t-light.p-sorbet{--bg:#EFE8E9;--b1:rgba(194,65,12,0.3);--b2:rgba(190,24,93,0.26);--b3:rgba(212,122,85,0.22);--b4:rgba(253,186,116,0.3)}
+html.p-avrora{--sig:#0F766E;--field:linear-gradient(90deg,color-mix(in srgb, #0F766E var(--fa), transparent),color-mix(in srgb, #2563EB var(--fa), transparent),color-mix(in srgb, #7C3AED var(--fa), transparent),color-mix(in srgb, #BE185D var(--fa), transparent));--field-h:linear-gradient(90deg,color-mix(in srgb, #318982 var(--fa), transparent),color-mix(in srgb, #4479EE var(--fa), transparent),color-mix(in srgb, #8E56F0 var(--fa), transparent),color-mix(in srgb, #C73874 var(--fa), transparent));--on-sig:#FFFFFF;--on-sig2:rgba(255,255,255,.9);--acc:#C9B8FF;--sw:linear-gradient(135deg,#0F766E,#2563EB,#7C3AED,#BE185D)}
+html.t-dark.p-avrora{--bg:#081014;--b1:rgba(15,118,110,0.46);--b2:rgba(37,99,235,0.2);--b3:rgba(190,24,93,0.2);--b4:rgba(201,184,255,0.12)}
+html.t-light.p-avrora{--bg:#E4ECEF;--b1:rgba(15,118,110,0.3);--b2:rgba(37,99,235,0.26);--b3:rgba(190,24,93,0.22);--b4:rgba(201,184,255,0.3)}
+html.p-rassvet{--sig:#C2410C;--field:linear-gradient(90deg,color-mix(in srgb, #C2410C var(--fa), transparent),color-mix(in srgb, #BE185D var(--fa), transparent),color-mix(in srgb, #6D28D9 var(--fa), transparent));--field-h:linear-gradient(90deg,color-mix(in srgb, #CB5C2E var(--fa), transparent),color-mix(in srgb, #C73874 var(--fa), transparent),color-mix(in srgb, #8146DE var(--fa), transparent));--on-sig:#FFFFFF;--on-sig2:rgba(255,255,255,.9);--acc:#F9A8D4;--sw:linear-gradient(135deg,#C2410C,#BE185D,#6D28D9)}
+html.t-dark.p-rassvet{--bg:#140C0D;--b1:rgba(194,65,12,0.46);--b2:rgba(190,24,93,0.2);--b3:rgba(109,40,217,0.2);--b4:rgba(249,168,212,0.12)}
+html.t-light.p-rassvet{--bg:#EFE8E9;--b1:rgba(194,65,12,0.3);--b2:rgba(190,24,93,0.26);--b3:rgba(109,40,217,0.22);--b4:rgba(249,168,212,0.3)}
+html.p-prizma{--sig:#B91C1C;--field:linear-gradient(90deg,color-mix(in srgb, #B91C1C var(--fa), transparent),color-mix(in srgb, #B45309 var(--fa), transparent),color-mix(in srgb, #15803D var(--fa), transparent),color-mix(in srgb, #1D4ED8 var(--fa), transparent),color-mix(in srgb, #6D28D9 var(--fa), transparent));--field-h:linear-gradient(90deg,color-mix(in srgb, #C33C3C var(--fa), transparent),color-mix(in srgb, #BE6B2B var(--fa), transparent),color-mix(in srgb, #369258 var(--fa), transparent),color-mix(in srgb, #3D67DD var(--fa), transparent),color-mix(in srgb, #8146DE var(--fa), transparent));--on-sig:#FFFFFF;--on-sig2:rgba(255,255,255,.9);--acc:#9CC8FF;--sw:linear-gradient(135deg,#B91C1C,#B45309,#15803D,#1D4ED8,#6D28D9)}
+html.t-dark.p-prizma{--bg:#13090E;--b1:rgba(185,28,28,0.46);--b2:rgba(180,83,9,0.2);--b3:rgba(109,40,217,0.2);--b4:rgba(156,200,255,0.12)}
+html.t-light.p-prizma{--bg:#EFE6EA;--b1:rgba(185,28,28,0.3);--b2:rgba(180,83,9,0.26);--b3:rgba(109,40,217,0.22);--b4:rgba(156,200,255,0.3)}

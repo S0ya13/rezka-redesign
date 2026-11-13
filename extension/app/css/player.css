@@ -1,0 +1,42 @@
+/* player.css — ported from design D; owned by app/player.js. Rewrite to the T design (canvas «Раунд 3/4»). */
+/* ===================== Own player controls (player.js) ===================== */
+#oframecdnplayer > [data-rz-hidden] { display: none !important; }
+html.rz-on #cdnplayer-container { position: relative; }
+.rz-pui { position: absolute; inset: 0; z-index: 20; font-family: var(--rz-text); color: var(--rz-ink); font-variant-numeric: tabular-nums; }
+.rz-pui.rz-playing:not(.rz-awake) { cursor: none; }
+.rz-pplate, .rz-pbig, .rz-pbar, .rz-pmenu { background: rgba(14,12,10,.55); -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.12), inset 0 0 0 1px rgba(255,255,255,.07); }
+.rz-pplate, .rz-pbar { transition: opacity .3s var(--rz-ease), transform .3s var(--rz-ease); }
+.rz-pui.rz-playing:not(.rz-awake) .rz-pplate, .rz-pui.rz-playing:not(.rz-awake) .rz-pbar { opacity: 0; transform: translateY(8px); pointer-events: none; }
+.rz-pplate { position: absolute; left: 20px; top: 20px; display: flex; gap: 12px; align-items: baseline; padding: 10px 16px; border-radius: 14px; font-size: 15px; color: var(--rz-ink2); }
+.rz-pplate[hidden] { display: none; }
+.rz-pse { color: var(--rz-amb); font-size: 13px; font-weight: 600; }
+.rz-pc { width: 44px; height: 44px; padding: 0; border: 0; border-radius: 12px; background: transparent; color: var(--rz-ink); display: grid; place-items: center; cursor: pointer; transition: background .2s var(--rz-ease); flex: 0 0 auto; }
+.rz-pc:hover { background: rgba(255,255,255,.1); }
+.rz-pc[hidden] { display: none; }
+.rz-pbig { position: absolute; left: 50%; top: 50%; width: 92px; height: 92px; margin: -46px 0 0 -46px; border-radius: 50%; transition: opacity .25s var(--rz-ease), transform .25s var(--rz-ease); }
+.rz-pbig svg { width: 34px; height: 34px; margin-left: 4px; }
+.rz-pbig:hover { background: rgba(14,12,10,.7); transform: scale(1.05); }
+.rz-pui.rz-playing .rz-pbig { opacity: 0; transform: scale(.85); pointer-events: none; }
+.rz-pbar { position: absolute; left: 20px; right: 20px; bottom: 20px; display: flex; flex-direction: column; gap: 8px; padding: 14px 12px 8px; border-radius: 18px; }
+.rz-pline { --p: 0; --b: 0; position: relative; height: 5px; margin: 0 6px; border-radius: 3px; background: rgba(243,236,226,.18); cursor: pointer; touch-action: none; transition: height .15s; }
+.rz-pline::after { content: ''; position: absolute; inset: -9px 0; }
+.rz-pline:hover { height: 7px; }
+.rz-pbuf, .rz-pdone { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; }
+.rz-pbuf { width: calc(var(--b) * 100%); background: rgba(243,236,226,.22); }
+.rz-pdone { width: calc(var(--p) * 100%); background: var(--rz-amb); }
+.rz-pknob { position: absolute; top: 50%; left: calc(var(--p) * 100%); width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: var(--rz-amb); box-shadow: 0 2px 6px rgba(0,0,0,.5); }
+.rz-ptip { position: absolute; bottom: 16px; transform: translateX(-50%); padding: 4px 8px; border-radius: 8px; background: var(--rz-ink); color: var(--rz-bg); font-size: 12px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity .15s; }
+.rz-pline:hover .rz-ptip { opacity: 1; }
+.rz-prow { display: flex; align-items: center; gap: 2px; font-size: 14px; }
+.rz-pgrow { flex: 1; }
+.rz-ptime { margin-left: 8px; color: var(--rz-ink2); white-space: nowrap; }
+.rz-ptime b { color: var(--rz-ink); font-weight: 600; }
+.rz-pvol { width: 84px; accent-color: var(--rz-amb); cursor: pointer; }
+.rz-pq { width: auto; height: 30px; padding: 0 10px; margin-right: 4px; border-radius: 8px; background: rgba(255,255,255,.1); font: 600 13px var(--rz-text); }
+.rz-pmenu { position: absolute; right: 20px; bottom: 100px; z-index: 2; min-width: 180px; max-height: 60%; overflow: auto; padding: 6px; border-radius: 16px; display: flex; flex-direction: column; }
+.rz-pmenu[hidden] { display: none; }
+.rz-pmi { height: 40px; padding: 0 14px; border: 0; border-radius: 10px; background: transparent; color: var(--rz-ink2); font: 500 14px var(--rz-text); text-align: left; cursor: pointer; }
+.rz-pmi:hover { background: rgba(255,255,255,.08); color: var(--rz-ink); }
+.rz-pmi.on { color: var(--rz-amb); font-weight: 700; }
+

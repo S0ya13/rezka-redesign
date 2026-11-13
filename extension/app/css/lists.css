@@ -1,0 +1,56 @@
+/* lists.css — ported from design D; owned by app/lists.js. Rewrite to the T design (canvas «Раунд 3/4»). */
+/* ===================== Listing pages (home, catalog, search, announce, bookmarks) ===================== */
+html.rz-list #main { padding-top: 40px; }
+html.rz-list .b-content__htitle { margin: 16px 0 28px !important; }
+html.rz-list .b-content__htitle h1 { font: 600 clamp(40px,5vw,72px)/.95 var(--rz-disp) !important; text-transform: uppercase; color: var(--rz-ink) !important; }
+html.rz-list .b-content__columns, html.rz-list .b-content__main { width: auto !important; float: none !important; }
+html.rz-list .b-content__inline_inner { padding-right: 0 !important; position: relative; }
+html.rz-list .b-content__inline_inner_main:has(> .b-content__inline_sidebar) { padding-right: 420px !important; }
+html.rz-list .b-content__inline_sidebar { position: absolute !important; right: 0; top: 0; width: 360px !important; float: none !important; margin: 0 !important; }
+html.rz-list .b-content__inline_items { float: none !important; width: auto !important; display: grid !important; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 32px 18px; padding: 0 !important; }
+html.rz-list .b-content__inline_items::before, html.rz-list .b-content__inline_items::after, html.rz-list .b-content__inline_items .clear,
+html.rz-list .b-content__collections_list::before, html.rz-list .b-content__collections_list::after { display: none !important; }
+.b-content__inline_items .b-content__inline_item { float: none !important; width: auto !important; margin: 0 !important; display: flex; flex-direction: column; gap: 10px; }
+.b-content__inline_item { font-family: var(--rz-text); }
+.b-content__inline_item-cover { position: relative; display: block; width: auto !important; height: auto !important; padding: 0 !important; border: 0 !important; border-radius: 14px; overflow: hidden; background: var(--rz-s2) !important; box-shadow: inset 0 0 0 1px var(--rz-hair) !important; }
+.b-content__inline_item-cover img { display: block; width: 100% !important; height: auto !important; aspect-ratio: 2/3; object-fit: cover; transition: transform .6s var(--rz-ease), filter .4s var(--rz-ease); }
+.b-content__inline_item:hover .b-content__inline_item-cover img { transform: scale(1.045); filter: brightness(.7); }
+.b-content__inline_item-cover .cat { position: absolute !important; left: 8px !important; top: 8px !important; right: auto !important; height: 24px; padding: 0 9px !important; border-radius: 999px !important;
+  background: rgba(14,12,10,.62) !important; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); display: inline-flex !important; align-items: center; width: auto !important; }
+.b-content__inline_item-cover .cat .entity { display: inline !important; position: static !important; color: var(--rz-ink) !important; font: 600 12px var(--rz-text) !important; text-indent: 0 !important; background: none !important; }
+.b-content__inline_item-cover .cat .icon, .b-content__inline_item-cover .i-sprt.play { display: none !important; }
+.b-content__inline_item-cover .info { position: absolute !important; left: 8px !important; right: 8px !important; bottom: 8px !important; top: auto !important; padding: 5px 9px !important; border-radius: 9px !important;
+  background: rgba(14,12,10,.62) !important; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); color: var(--rz-ink) !important; font: 600 12px/1.3 var(--rz-text) !important; text-align: left !important; }
+.b-content__inline_item-cover .trailer { left: auto !important; right: 8px !important; top: 8px !important; width: 28px !important; height: 28px !important; border-radius: 50%; background-color: rgba(14,12,10,.62) !important; background-position: center !important; opacity: .9; }
+.b-content__inline_item-link { padding: 0 !important; }
+.b-content__inline_item-link a { color: var(--rz-ink) !important; font: 600 15px/1.3 var(--rz-text) !important; text-decoration: none !important; }
+.b-content__inline_item-link div { color: var(--rz-ink3) !important; font: 13px/1.4 var(--rz-text) !important; margin-top: 4px; }
+/* sort tabs + type filter */
+.b-content__main_filters { display: flex !important; flex-wrap: wrap; gap: 12px; margin: 0 0 24px !important; padding: 0 !important; background: none !important; list-style: none; }
+.b-content__main_filters > li { float: none !important; display: inline-flex; gap: 2px; padding: 0 !important; background: none !important; }
+.rz-genres { display: flex; flex-wrap: wrap; gap: 8px; margin: -8px 0 36px; }
+.rz-genres .rz-tag[aria-current] { background: var(--rz-amb); color: var(--rz-on) !important; box-shadow: none; font-weight: 600; }
+html.rz-list .b-content__collections_list { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 28px 20px; }
+html.rz-list .b-content__collections_item { float: none !important; width: auto !important; height: auto !important; margin: 0 !important; position: relative; border-radius: 20px; overflow: hidden; box-shadow: inset 0 0 0 1px var(--rz-hair); }
+html.rz-list .b-content__collections_item .cover { display: block; width: 100% !important; height: auto !important; aspect-ratio: 208/120; object-fit: cover; }
+html.rz-list .b-content__collections_item .num { position: absolute; right: 10px; top: 10px; left: auto; padding: 4px 10px; border-radius: 999px; background: rgba(14,12,10,.62) !important; color: var(--rz-ink) !important; font: 600 13px var(--rz-text) !important; }
+html.rz-list .b-content__collections_item .title-layer { position: absolute; inset: auto 0 0 0; padding: 40px 16px 14px; background: linear-gradient(transparent, rgba(14,12,10,.9)) !important; }
+html.rz-list .b-content__collections_item .title { color: var(--rz-ink) !important; font: 600 16px/1.3 var(--rz-text) !important; text-decoration: none !important; }
+.b-content__main_filters a, .b-content__main_filters span, .b-content__filters_types a { display: inline-flex !important; align-items: center; height: 38px; padding: 0 16px !important; border-radius: 999px !important;
+  background: transparent !important; color: var(--rz-ink2) !important; font: 500 14px var(--rz-text) !important; text-decoration: none !important; border: 0 !important; }
+.b-content__main_filters .selected, .b-content__main_filters .active, .b-content__main_filters a.selected, .b-content__filters_types a.selected, .b-content__filters_types a.active { background: var(--rz-ink) !important; color: var(--rz-bg) !important; font-weight: 600 !important; }
+/* pagination */
+.b-navigation { display: flex !important; flex-wrap: wrap; align-items: center; gap: 4px; margin-top: 40px !important; background: none !important; }
+.b-navigation a, .b-navigation span { min-width: 44px; height: 44px; padding: 0 6px !important; box-sizing: border-box; border-radius: 999px !important; display: inline-grid !important; place-items: center;
+  background: transparent !important; color: var(--rz-ink2) !important; font: 500 15px var(--rz-text) !important; border: 0 !important; text-decoration: none !important; }
+.b-navigation a:hover { background: rgba(255,255,255,.07) !important; color: var(--rz-ink) !important; }
+.b-navigation span.current, .b-navigation > span:not(.nav_ext) { background: var(--rz-ink) !important; color: var(--rz-bg) !important; font-weight: 700 !important; }
+/* home: newest slider, collections banners, hot updates */
+.b-content__description { color: var(--rz-ink3) !important; font-size: 14px; max-width: 80ch; }
+
+@media (max-width: 1100px) { .rz-hero { grid-template-columns: 200px minmax(0,1fr); } .rz-hero .rz-card { grid-column: 1 / -1; } .rz-nav { display: none; } }
+
+
+/* ===================== Fixes found on live pages ===================== */
+/* list pages without Rezka's right column (collections etc.) reserve 280px for it: give it back */
+html.rz-list .b-content__columns:not(:has(> .b-content__side)) { padding-right: 0 !important; }
