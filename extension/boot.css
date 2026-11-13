@@ -1,0 +1,14 @@
+/* Injected at document_start, before Rezka paints anything. Everything else lives in app/app.css,
+   loaded by loader.js from disk on every page load. */
+
+/* No flash of Rezka's own design: theme background at once, page hidden until the app adds .rz-ready
+   (a CSS-only fallback reveals it after 3 s if the app fails). */
+html { background: #0C0E1A !important; }
+html.t-light { background: #EEF0F6 !important; }
+html:not(.rz-ready) body { visibility: hidden; animation: rz-reveal 0s linear 3s forwards; }
+@keyframes rz-reveal { to { visibility: visible; } }
+
+/* Clutter, hidden even if the app never runs */
+html body.has-brand, html body.active-brand.pp { padding-top: 0 !important; background-image: none !important; }
+.b-tophead__subscribe-dropdown, .b-prem-button, .b-post__prem_content, .vk-group, .share-btn-item.vk,
+.b-post__social_holder, .b-post__social_holder_wrapper, .b-dwnapp, #b-post__prem_holder { display: none !important; }

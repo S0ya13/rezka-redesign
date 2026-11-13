@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Rezka Redesign",
-  "version": "0.3.0",
-  "description": "Rezka in a new skin: full-width layout, theater mode, IMDb rating per episode.",
+  "version": "0.4.0",
+  "description": "Rezka in a new skin: themes, liquid glass, full-width layout, theater mode, IMDb rating per episode.",
   "permissions": [
     "storage"
   ],
@@ -16,7 +16,7 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "clean.css"
+        "app/*"
       ],
       "matches": [
         "*://rezka.ag/*",
@@ -61,7 +61,10 @@
         "*://hdrezka.in/*"
       ],
       "css": [
-        "clean.css"
+        "boot.css"
+      ],
+      "js": [
+        "boot.js"
       ],
       "run_at": "document_start"
     },
@@ -86,35 +89,9 @@
         "*://hdrezka.in/*"
       ],
       "js": [
-        "content.js"
+        "loader.js"
       ],
       "run_at": "document_end"
-    },
-    {
-      "matches": [
-        "*://rezka.ag/*",
-        "*://*.rezka.ag/*",
-        "*://rezka-ag.net/*",
-        "*://hdrezka.me/*",
-        "*://hdrezka.ag/*",
-        "*://hdrezka.ac/*",
-        "*://hdrezka.co/*",
-        "*://hdrezka.cm/*",
-        "*://hdrezka.re/*",
-        "*://hdrezka.sh/*",
-        "*://hdrezka.ink/*",
-        "*://hdrezka.kim/*",
-        "*://hdrezka.name/*",
-        "*://hdrezka.website/*",
-        "*://hdrezka.today/*",
-        "*://hdrezka.tv/*",
-        "*://hdrezka.in/*"
-      ],
-      "js": [
-        "player.js"
-      ],
-      "run_at": "document_idle",
-      "world": "MAIN"
     }
   ]
 }

@@ -1,4 +1,4 @@
-(() => {
+export async function start() {
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const h = (tag, attrs = {}, ...kids) => {
@@ -23,14 +23,6 @@
   };
   const root = document.documentElement;
   const isTitle = !!$('.b-post__title') && !!$('.b-post__info');
-
-  // ---------- Fonts + our CSS again, last in <head> ----------
-  // The manifest injects clean.css early (no flash), but before Rezka's sheets, so equal-specificity
-  // !important rules (e.g. branding's `body.active-brand #wrapper { background: #fff !important }`) beat it.
-  // A second copy after Rezka's sheets wins those ties.
-  document.head.append(
-    h('link', { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=Golos+Text:wght@400;500;600;700&display=swap' }),
-    h('link', { rel: 'stylesheet', href: chrome.runtime.getURL('clean.css') }));
 
   // ---------- Header ----------
   // fixed list: Rezka's own menu differs between pages
@@ -398,4 +390,4 @@
     new MutationObserver(() => { clearTimeout(timer); timer = setTimeout(paint, 120); })
       .observe($('#simple-episodes-tabs') || $('#player') || document.body, { childList: true, subtree: true });
   }
-})();
+}
