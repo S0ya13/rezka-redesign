@@ -11,9 +11,9 @@ html { --sig: #3A4A8A; --on-sig: #FFFFFF; --on-sig2: rgba(255,255,255,.9); --acc
   --rz-ease: var(--ease); --rz-disp: var(--disp); --rz-text: var(--text); }
 html.t-dark{--fa:84%;--blk:rgba(8,10,20,.62);--blk-h:rgba(255,255,255,.08);--s1:rgba(20,22,34,.55);--s2:rgba(255,255,255,.06);--line:rgba(255,255,255,.11);--ink:#EEF0F8;--ink2:#C3C7DA;--ink3:#959BB0;--hover:rgba(255,255,255,.06);--rim:rgba(255,255,255,.16);--sh:0 18px 44px -18px rgba(0,0,0,.8);--pop:rgba(16,18,30,.94)}
 html.t-light{--fa:94%;--blk:rgba(10,12,24,.64);--blk-h:rgba(10,12,24,.8);--s1:rgba(255,255,255,.6);--s2:rgba(15,18,34,.05);--line:rgba(15,18,34,.12);--ink:#0F1222;--ink2:#393E55;--ink3:#585E76;--hover:rgba(15,18,34,.05);--rim:rgba(255,255,255,.85);--sh:0 14px 34px -16px rgba(14,16,30,.28);--pop:rgba(255,255,255,.95)}
-html.p-sumerki{--sig:#3A4A8A;--field:color-mix(in srgb, #3A4A8A var(--fa), transparent);--field-h:color-mix(in srgb, #56639A var(--fa), transparent);--on-sig:#FFFFFF;--on-sig2:rgba(255,255,255,.9);--acc:#F2B48C;--sw:#3A4A8A}
-html.t-dark.p-sumerki{--bg:#0B0D16;--b1:rgba(58,74,138,0.46);--b2:rgba(242,180,140,0.2);--b3:rgba(117,128,173,0.2);--b4:rgba(242,180,140,0.12)}
-html.t-light.p-sumerki{--bg:#E7E9F0;--b1:rgba(58,74,138,0.3);--b2:rgba(242,180,140,0.26);--b3:rgba(117,128,173,0.22);--b4:rgba(242,180,140,0.3)}
+html.p-sumerki{--sig:#3A4A8A;--field:color-mix(in srgb, #3A4A8A var(--fa), transparent);--field-h:color-mix(in srgb, #56639A var(--fa), transparent);--on-sig:#FFFFFF;--on-sig2:rgba(255,255,255,.9);--acc:#B9C1EC;--sw:#3A4A8A}
+html.t-dark.p-sumerki{--bg:#0B0D16;--b1:rgba(58,74,138,0.46);--b2:rgba(185,193,236,0.2);--b3:rgba(117,128,173,0.2);--b4:rgba(185,193,236,0.12)}
+html.t-light.p-sumerki{--bg:#E7E9F0;--b1:rgba(58,74,138,0.3);--b2:rgba(185,193,236,0.26);--b3:rgba(117,128,173,0.22);--b4:rgba(185,193,236,0.3)}
 html.p-kobalt{--sig:#2B4AE0;--field:color-mix(in srgb, #2B4AE0 var(--fa), transparent);--field-h:color-mix(in srgb, #4963E4 var(--fa), transparent);--on-sig:#FFFFFF;--on-sig2:rgba(255,255,255,.9);--acc:#A9BCFF;--sw:#2B4AE0}
 html.t-dark.p-kobalt{--bg:#0A0D1C;--b1:rgba(43,74,224,0.46);--b2:rgba(169,188,255,0.2);--b3:rgba(107,128,233,0.2);--b4:rgba(169,188,255,0.12)}
 html.t-light.p-kobalt{--bg:#E6E9F6;--b1:rgba(43,74,224,0.3);--b2:rgba(169,188,255,0.26);--b3:rgba(107,128,233,0.22);--b4:rgba(169,188,255,0.3)}
