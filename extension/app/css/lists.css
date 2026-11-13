@@ -1,56 +1,128 @@
-/* lists.css — ported from design D; owned by app/lists.js. Rewrite to the T design (canvas «Раунд 3/4»). */
-/* ===================== Listing pages (home, catalog, search, announce, bookmarks) ===================== */
-html.rz-list #main { padding-top: 40px; }
-html.rz-list .b-content__htitle { margin: 16px 0 28px !important; }
-html.rz-list .b-content__htitle h1 { font: 600 clamp(40px,5vw,72px)/.95 var(--rz-disp) !important; text-transform: uppercase; color: var(--rz-ink) !important; }
+/* lists.css — catalogues, genres, «Новинки», «Лучшие», search, announce, collections, person. Owned by app/lists.js.
+   Poster cards, sort tabs and pagination are styled for every page in base.css. */
+
+/* ===================== Shared list-page structure =====================
+   home.js and account.js add .rz-list too and still rely on this block: move it to base.css once they own their layout. */
 html.rz-list .b-content__columns, html.rz-list .b-content__main { width: auto !important; float: none !important; }
 html.rz-list .b-content__inline_inner { padding-right: 0 !important; position: relative; }
 html.rz-list .b-content__inline_inner_main:has(> .b-content__inline_sidebar) { padding-right: 420px !important; }
 html.rz-list .b-content__inline_sidebar { position: absolute !important; right: 0; top: 0; width: 360px !important; float: none !important; margin: 0 !important; }
-html.rz-list .b-content__inline_items { float: none !important; width: auto !important; display: grid !important; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 32px 18px; padding: 0 !important; }
-html.rz-list .b-content__inline_items::before, html.rz-list .b-content__inline_items::after, html.rz-list .b-content__inline_items .clear,
-html.rz-list .b-content__collections_list::before, html.rz-list .b-content__collections_list::after { display: none !important; }
-.b-content__inline_items .b-content__inline_item { float: none !important; width: auto !important; margin: 0 !important; display: flex; flex-direction: column; gap: 10px; }
-.b-content__inline_item { font-family: var(--rz-text); }
-.b-content__inline_item-cover { position: relative; display: block; width: auto !important; height: auto !important; padding: 0 !important; border: 0 !important; border-radius: 14px; overflow: hidden; background: var(--rz-s2) !important; box-shadow: inset 0 0 0 1px var(--rz-hair) !important; }
-.b-content__inline_item-cover img { display: block; width: 100% !important; height: auto !important; aspect-ratio: 2/3; object-fit: cover; transition: transform .6s var(--rz-ease), filter .4s var(--rz-ease); }
-.b-content__inline_item:hover .b-content__inline_item-cover img { transform: scale(1.045); filter: brightness(.7); }
-.b-content__inline_item-cover .cat { position: absolute !important; left: 8px !important; top: 8px !important; right: auto !important; height: 24px; padding: 0 9px !important; border-radius: 999px !important;
-  background: rgba(14,12,10,.62) !important; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); display: inline-flex !important; align-items: center; width: auto !important; }
-.b-content__inline_item-cover .cat .entity { display: inline !important; position: static !important; color: var(--rz-ink) !important; font: 600 12px var(--rz-text) !important; text-indent: 0 !important; background: none !important; }
-.b-content__inline_item-cover .cat .icon, .b-content__inline_item-cover .i-sprt.play { display: none !important; }
-.b-content__inline_item-cover .info { position: absolute !important; left: 8px !important; right: 8px !important; bottom: 8px !important; top: auto !important; padding: 5px 9px !important; border-radius: 9px !important;
-  background: rgba(14,12,10,.62) !important; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); color: var(--rz-ink) !important; font: 600 12px/1.3 var(--rz-text) !important; text-align: left !important; }
-.b-content__inline_item-cover .trailer { left: auto !important; right: 8px !important; top: 8px !important; width: 28px !important; height: 28px !important; border-radius: 50%; background-color: rgba(14,12,10,.62) !important; background-position: center !important; opacity: .9; }
-.b-content__inline_item-link { padding: 0 !important; }
-.b-content__inline_item-link a { color: var(--rz-ink) !important; font: 600 15px/1.3 var(--rz-text) !important; text-decoration: none !important; }
-.b-content__inline_item-link div { color: var(--rz-ink3) !important; font: 13px/1.4 var(--rz-text) !important; margin-top: 4px; }
-/* sort tabs + type filter */
-.b-content__main_filters { display: flex !important; flex-wrap: wrap; gap: 12px; margin: 0 0 24px !important; padding: 0 !important; background: none !important; list-style: none; }
-.b-content__main_filters > li { float: none !important; display: inline-flex; gap: 2px; padding: 0 !important; background: none !important; }
-.rz-genres { display: flex; flex-wrap: wrap; gap: 8px; margin: -8px 0 36px; }
-.rz-genres .rz-tag[aria-current] { background: var(--rz-amb); color: var(--rz-on) !important; box-shadow: none; font-weight: 600; }
-html.rz-list .b-content__collections_list { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 28px 20px; }
-html.rz-list .b-content__collections_item { float: none !important; width: auto !important; height: auto !important; margin: 0 !important; position: relative; border-radius: 20px; overflow: hidden; box-shadow: inset 0 0 0 1px var(--rz-hair); }
-html.rz-list .b-content__collections_item .cover { display: block; width: 100% !important; height: auto !important; aspect-ratio: 208/120; object-fit: cover; }
-html.rz-list .b-content__collections_item .num { position: absolute; right: 10px; top: 10px; left: auto; padding: 4px 10px; border-radius: 999px; background: rgba(14,12,10,.62) !important; color: var(--rz-ink) !important; font: 600 13px var(--rz-text) !important; }
-html.rz-list .b-content__collections_item .title-layer { position: absolute; inset: auto 0 0 0; padding: 40px 16px 14px; background: linear-gradient(transparent, rgba(14,12,10,.9)) !important; }
-html.rz-list .b-content__collections_item .title { color: var(--rz-ink) !important; font: 600 16px/1.3 var(--rz-text) !important; text-decoration: none !important; }
-.b-content__main_filters a, .b-content__main_filters span, .b-content__filters_types a { display: inline-flex !important; align-items: center; height: 38px; padding: 0 16px !important; border-radius: 999px !important;
-  background: transparent !important; color: var(--rz-ink2) !important; font: 500 14px var(--rz-text) !important; text-decoration: none !important; border: 0 !important; }
-.b-content__main_filters .selected, .b-content__main_filters .active, .b-content__main_filters a.selected, .b-content__filters_types a.selected, .b-content__filters_types a.active { background: var(--rz-ink) !important; color: var(--rz-bg) !important; font-weight: 600 !important; }
-/* pagination */
-.b-navigation { display: flex !important; flex-wrap: wrap; align-items: center; gap: 4px; margin-top: 40px !important; background: none !important; }
-.b-navigation a, .b-navigation span { min-width: 44px; height: 44px; padding: 0 6px !important; box-sizing: border-box; border-radius: 999px !important; display: inline-grid !important; place-items: center;
-  background: transparent !important; color: var(--rz-ink2) !important; font: 500 15px var(--rz-text) !important; border: 0 !important; text-decoration: none !important; }
-.b-navigation a:hover { background: rgba(255,255,255,.07) !important; color: var(--rz-ink) !important; }
-.b-navigation span.current, .b-navigation > span:not(.nav_ext) { background: var(--rz-ink) !important; color: var(--rz-bg) !important; font-weight: 700 !important; }
-/* home: newest slider, collections banners, hot updates */
-.b-content__description { color: var(--rz-ink3) !important; font-size: 14px; max-width: 80ch; }
-
-@media (max-width: 1100px) { .rz-hero { grid-template-columns: 200px minmax(0,1fr); } .rz-hero .rz-card { grid-column: 1 / -1; } .rz-nav { display: none; } }
-
-
-/* ===================== Fixes found on live pages ===================== */
-/* list pages without Rezka's right column (collections etc.) reserve 280px for it: give it back */
 html.rz-list .b-content__columns:not(:has(> .b-content__side)) { padding-right: 0 !important; }
+html.rz-list:not(.rz-lists) #main { padding-top: 40px; }
+html.rz-list:not(.rz-lists) .b-content__htitle { margin: 16px 0 28px !important; }
+html.rz-list:not(.rz-lists) .b-content__htitle h1 { font: 900 clamp(48px,6vw,96px)/.9 var(--disp) !important; text-transform: uppercase; color: var(--ink) !important; }
+
+/* ===================== Our pages: a glass head instead of Rezka's title ===================== */
+html.rz-lists #main { padding-top: 0 !important; }
+html.rz-lists .b-content__htitle, html.rz-lists .b-post__title { display: none !important; }
+html.rz-lists .b-container.b-content, html.rz-lists #main > .b-container { padding-top: 40px !important; }
+html.rz-lists .b-content__columns > :not(.b-content__main) { display: none !important; } /* Rezka's side column holds only the VK block */
+html.rz-lists .b-content__inline_item[hidden] { display: none !important; }
+html.rz-lists .b-content__main_filters { margin-bottom: 18px !important; }
+html.rz-lists .b-content__main_filters:has(+ .b-content__inline) { margin-bottom: 32px !important; }
+html.rz-lists .b-content__inline { padding-top: 0 !important; }
+html.rz-lists .b-content__inline_inner { margin-left: 0 !important; }
+/* pagination sits inside Rezka's grid: give it a full row; disabled «назад» is dim, sprite arrows become chevrons */
+html.rz-lists .b-navigation { grid-column: 1 / -1; }
+html.rz-lists .b-navigation > span.no-page { background: none !important; color: var(--ink3) !important; opacity: .4; }
+html.rz-lists .b-navigation .b-navigation__prev, html.rz-lists .b-navigation .b-navigation__next { min-width: 0 !important; height: auto !important; padding: 0 !important; background: none !important; font-size: 0 !important; }
+html.rz-lists .b-navigation .b-navigation__prev::before, html.rz-lists .b-navigation .b-navigation__next::before { content: ''; width: 12px; height: 12px; border: solid currentColor; border-width: 0 0 3px 3px; transform: rotate(45deg); margin-left: 5px; }
+html.rz-lists .b-navigation .b-navigation__next::before { transform: rotate(-135deg); margin: 0 5px 0 0; }
+
+/* genre chips (countries after a gap) and the «Найти лучшие» finder */
+.rz-genres { margin: 0 0 18px; }
+.rz-genres:last-child, .rz-genres:has(+ .b-content__inline) { margin-bottom: 32px; }
+.rz-genres .rz-chip:not(.rz-chip-c) + .rz-chip-c { margin-left: 14px; }
+.rz-finder { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; margin: 0 0 32px; padding: 14px 16px; border-radius: 6px; color: var(--ink); }
+.rz-finder b { margin-right: 6px; font: 800 24px/1 var(--disp); text-transform: uppercase; letter-spacing: .02em; }
+.rz-finder select { height: 48px; min-width: 200px; padding: 0 16px; border-radius: 4px; border: 1px solid var(--line); background: var(--s2); color: var(--ink); font: 600 16px var(--text); cursor: pointer; }
+.rz-finder select:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+.rz-finder option { background: #14172A; color: #EEF0F8; }
+.rz-finder .rz-btn { height: 48px; }
+
+/* «Новинки»: Rezka's type links on their own row as chips */
+html.rz-lists .b-content__main_filters .b-content__filters_types { flex-basis: 100%; display: flex !important; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 10px; }
+html.rz-lists .b-content__main_filters .b-content__filters_types a.rz-chip { height: 40px; padding: 0 16px !important; border-radius: 999px !important; background: transparent !important;
+  color: var(--ink2) !important; font: 600 15px/1 var(--text) !important; text-transform: none; box-shadow: inset 0 0 0 1.5px var(--line); }
+html.rz-lists .b-content__main_filters .b-content__filters_types a.rz-chip:hover { color: var(--ink) !important; box-shadow: inset 0 0 0 1.5px var(--ink3); }
+html.rz-lists .b-content__main_filters .b-content__filters_types a.rz-chip[aria-current] { background: var(--ink) !important; color: var(--bg) !important; box-shadow: none; }
+html.rz-lists .rz-seo { max-width: 80ch; margin: 64px 0 0 !important; padding: 0 !important; background: none !important; color: var(--ink3) !important; font: 14px/1.55 var(--text) !important; }
+html.rz-lists .rz-seo * { color: inherit !important; font: inherit !important; }
+html.rz-lists .b-content__filters_types .filter-text { order: -1; height: auto !important; padding: 0 8px 0 0 !important; background: none !important;
+  color: var(--ink3) !important; font: 800 16px/1 var(--disp) !important; text-transform: uppercase; letter-spacing: .05em; }
+
+/* ===================== Search ===================== */
+.rz-kinds { margin: 0 0 32px; }
+:where(.rz-kinds, .rz-ptabs) button { border: 0; background: none; } /* UA button chrome; base's on-states still win */
+.rz-empty { max-width: 760px; display: flex; flex-direction: column; align-items: flex-start; gap: 18px; padding: 56px 48px; border-radius: 6px; color: var(--ink2); font: 17px/1.6 var(--text); }
+.rz-empty h2 { margin: 0; font-size: 84px; color: var(--ink); }
+.rz-empty p, .rz-empty ul { margin: 0; }
+.rz-empty ul { padding-left: 20px; list-style: disc; }
+
+/* ===================== Collections ===================== */
+html.rz-lists .b-content__collections_list { float: none !important; width: auto !important; margin: 0 !important; display: grid !important; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 32px 16px; }
+html.rz-lists .b-content__collections_list::before, html.rz-lists .b-content__collections_list::after { display: none !important; }
+html.rz-lists .b-content__collections_item { float: none !important; width: auto !important; height: auto !important; margin: 0 !important; padding: 0 !important; position: relative;
+  display: flex; flex-direction: column; gap: 12px; background: none !important; border: 0 !important; box-shadow: none !important; overflow: visible !important; cursor: pointer; }
+html.rz-lists .b-content__collections_item .rz-cv { display: block; aspect-ratio: 208/120; border-radius: 4px; overflow: hidden; background: var(--s2); }
+html.rz-lists .b-content__collections_item .cover { display: block; width: 100% !important; height: 100% !important; object-fit: cover; transition: transform .5s var(--ease); }
+html.rz-lists .b-content__collections_item:hover .cover { transform: scale(1.04); }
+html.rz-lists .b-content__collections_item .title-layer { position: static !important; height: auto !important; padding: 0 !important; background: none !important; display: flex; flex-direction: column; gap: 8px; }
+html.rz-lists .b-content__collections_item .title { padding: 0 !important; color: var(--ink) !important; font: 900 28px/.95 var(--disp) !important; text-transform: uppercase; text-decoration: none !important; text-shadow: none !important; }
+html.rz-lists .b-content__collections_item:hover .title { text-decoration: underline !important; text-underline-offset: 4px; text-decoration-thickness: 2px !important; text-decoration-color: var(--sig) !important; }
+html.rz-lists .b-content__collections_item .num { position: static !important; width: auto !important; height: auto !important; padding: 0 !important; background: none !important;
+  color: var(--ink3) !important; font: 400 15px/1.2 var(--text) !important; text-align: left !important; }
+
+/* ===================== Announce: «Трейлер» under every card ===================== */
+.rz-phead .b-content__section_description { margin: 18px 0 0 !important; padding: 0 !important; max-width: 72ch; background: none !important; color: var(--on-sig2) !important; font: 400 18px/1.5 var(--text) !important; }
+html.rz-lists .b-content__inline_item .rz-trbtn { position: static !important; display: inline-flex !important; align-self: flex-start; width: auto !important; height: 40px !important;
+  margin: 2px 0 0 !important; padding: 0 16px !important; background: var(--field) !important; color: var(--on-sig) !important; opacity: 1 !important; font-style: normal; text-indent: 0 !important; cursor: pointer; }
+html.rz-lists .b-content__inline_item .rz-trbtn:hover { background: var(--field-h) !important; }
+html.rz-lists .rz-trbtn::before { content: '' !important; position: static !important; width: 0 !important; height: 0 !important; margin: 0 !important; background: none !important; opacity: 1 !important;
+  border: solid transparent !important; border-width: 6px 0 6px 10px !important; border-left-color: currentColor !important; }
+html.rz-lists .rz-trbtn::after { display: none !important; }
+html.rz-lists .rz-trbtn b { display: inline !important; position: static !important; padding: 0 !important; margin: 0 !important; font: inherit !important; color: inherit !important; background: none !important; }
+.rz-notr { display: flex; align-items: center; height: 40px; color: var(--ink3); font: 600 14px var(--text); }
+
+/* ===================== Person ===================== */
+/* portrait (Rezka's lightbox photo) hangs out of the head; «Смотреть все N фото» under it */
+html.rz-lists .rz-phead .b-sidecover { flex: none; align-self: flex-start; width: 300px; margin: 0 0 -340px; position: relative; z-index: 2; display: flex; flex-direction: column; gap: 14px;
+  float: none !important; padding: 0 !important; background: none !important; border: 0 !important; }
+html.rz-lists .rz-phead .b-sidecover > a, html.rz-lists .rz-phead .b-sidecover > img { display: block; }
+html.rz-lists .rz-phead .b-sidecover img { display: block; width: 100% !important; height: auto !important; aspect-ratio: 2/3; object-fit: cover; border-radius: 4px; box-shadow: var(--sh); }
+html.rz-lists .b-post__infotable { margin: 0 !important; padding: 0 360px 0 0 !important; background: none !important; }
+html.rz-lists .b-post__infotable_left { display: none !important; }
+html.rz-lists .b-post__infotable_right, html.rz-lists .b-post__infotable_right_inner { float: none !important; width: auto !important; margin: 0 !important; padding: 0 !important; background: none !important; }
+html.rz-lists .b-post__infotable .b-post__info { width: auto !important; max-width: 760px; border-collapse: collapse; background: none !important; }
+html.rz-lists .b-post__infotable .b-post__info td { padding: 12px 24px 12px 0 !important; border: 0 !important; border-bottom: 1px solid var(--line) !important; background: none !important; color: var(--ink) !important; font: 16px/1.45 var(--text) !important; vertical-align: top; }
+html.rz-lists .b-post__infotable .b-post__info td.l { width: 180px; color: var(--ink3) !important; white-space: nowrap; }
+html.rz-lists .b-post__infotable .b-post__info td.l h2 { display: inline; margin: 0; font: inherit !important; color: inherit !important; }
+html.rz-lists .b-post__infotable .b-post__info a { color: var(--ink) !important; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--line); }
+html.rz-lists .b-person__gallery_holder { height: auto !important; margin: 24px 0 0; padding: 0 !important; background: none !important; }
+html.rz-lists .rz-phead .b-person__gallery_holder { margin: 0; }
+html.rz-lists .b-person__gallery_list { display: none !important; }
+html.rz-lists .b-person__gallery_show { position: static !important; display: flex !important; width: auto !important; height: 48px !important; inset: auto !important; margin: 0 !important;
+  font-size: 20px !important; color: var(--ink) !important; background: var(--bg); }
+html.rz-lists .b-person__gallery_show:hover { background: var(--ink); color: var(--bg) !important; }
+html.rz-lists .b-person__gallery_show { justify-content: center; }
+html.rz-lists .b-person__gallery_show i { display: inline !important; position: static !important; padding: 0 !important; margin: 0 !important; background: none !important; font-style: normal; color: inherit !important; font: inherit !important; }
+.rz-ftitle { margin: 80px 0 20px; font-size: 84px; color: var(--ink); }
+.rz-ptabs { margin-bottom: 20px; }
+.rz-tab .rz-tab-n { margin-left: 10px; font: 700 18px/1 var(--text); opacity: .7; }
+html.rz-lists .b-person__career { margin: 0 !important; padding: 0 !important; background: none !important; border: 0 !important; }
+html.rz-lists .b-person__career > h2 { display: none !important; }
+html.rz-lists .b-person__career[hidden] { display: none !important; }
+html.rz-lists .b-person__career_stats { display: block; margin: 0 0 24px; color: var(--ink2) !important; font: 16px/1.4 var(--text) !important; }
+html.rz-lists .b-person__career .b-sidelist { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 28px 16px; float: none !important; width: auto !important; margin: 0 !important; padding: 0 !important; background: none !important; }
+html.rz-lists .b-person__career .b-sidelist .b-content__inline_item { float: none !important; width: auto !important; height: auto !important; margin: 0 !important; flex-direction: column; gap: 10px; }
+html.rz-lists .b-person__career .b-sidelist .b-content__inline_item:not(.is_hidden) { display: flex !important; }
+.rz-kp { display: flex; align-items: baseline; gap: 6px; margin-top: 4px; color: var(--ink); }
+.rz-kp b { font: 900 26px/1 var(--disp); }
+.rz-kp small { font: 700 13px/1 var(--text); color: var(--ink3); }
+html.rz-lists .b-person__career_more { margin-top: 28px; }
+html.rz-lists .b-person__career_more span { font: inherit !important; color: inherit !important; }
+
+@media (max-width: 1100px) {
+  html.rz-lists .rz-phead .b-sidecover { width: 180px; margin-bottom: -100px; }
+  html.rz-lists .b-post__infotable { padding-right: 200px !important; }
+}
