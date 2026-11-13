@@ -131,7 +131,7 @@ export const openSettings = async () => {
     say(true, 'Проверяем…');
     try {
       const r = await (await fetch(`https://www.omdbapi.com/?apikey=${encodeURIComponent(v)}&i=tt0903747`)).json();
-      if (r.Response === 'True') say(true, 'Ключ работает. Оценки IMDb появятся у серий.');
+      if (r.Response === 'True') { chrome.storage.local.remove('omdbBad'); say(true, 'Ключ работает. Оценки IMDb появятся у серий.'); } // forget an earlier rejection of this key
       else say(false, 'Ключ не принят: ' + (r.Error || 'ошибка OMDb') + '. Возьмите бесплатный ключ на omdbapi.com.');
     } catch { say(false, 'OMDb не отвечает. Проверьте интернет и попробуйте ещё раз.'); }
   };

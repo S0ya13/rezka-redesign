@@ -11,6 +11,7 @@ const check = async () => {
   status.textContent = 'Проверяем…';
   try {
     const r = await (await fetch(`https://www.omdbapi.com/?apikey=${encodeURIComponent(v)}&i=tt0903747`)).json();
+    if (r.Response === 'True') chrome.storage.local.remove('omdbBad'); // forget an earlier rejection of this key
     status.textContent = r.Response === 'True' ? 'Ключ работает.' : 'Ключ не принят: ' + (r.Error || 'ошибка OMDb') + '.';
   } catch { status.textContent = 'OMDb не отвечает.'; }
 };
