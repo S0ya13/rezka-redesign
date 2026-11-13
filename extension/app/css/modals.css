@@ -1,1 +1,186 @@
-/* modals.css — Rezka popups (login, trailer, support, bookmarks, messages) in the T design; owned by app/modals.js. */
+/* modals.css — Rezka's own popups restyled as glass windows with a colour-field header. Owned by app/modals.js.
+   Design: canvas «Раунд 4» M-Modals, M-Menus. Rezka shows and hides them itself (jQuery fade/show), so display stays its call. */
+
+html.rz-on { --m-modal: rgba(18,20,32,.88); --m-scrim: rgba(4,6,14,.6); --m-err: #FF9B8F; }
+html.rz-on.t-light { --m-modal: rgba(255,255,255,.93); --m-scrim: rgba(18,20,40,.42); --m-err: #B42318; }
+
+/* ===================== Shared pieces ===================== */
+/* close cross drawn with a mask so it follows the text colour */
+html.rz-on :is(.b-popup__close, #ps-close)::before { content: ''; position: static; display: block; width: 20px; height: 20px; margin: 0; transform: none; background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6 6 18'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6 6 18'/%3E%3C/svg%3E") center / contain no-repeat; }
+html.rz-on #ps-close::after { display: none !important; }
+/* Rezka's action buttons inside popups */
+html.rz-on :is(.b-popup, #ps-content) .btn-action, html.rz-on :is(.b-popup, #ps-content) .btn.btn-action {
+  display: inline-flex !important; align-items: center; justify-content: center; gap: 8px; height: 48px !important; padding: 0 22px !important; margin: 0 !important; border: 0 !important; border-radius: 4px !important; cursor: pointer;
+  background: var(--field) !important; color: var(--on-sig) !important; font: 800 20px/1 var(--disp) !important; text-transform: uppercase; letter-spacing: .03em; box-shadow: none !important; text-shadow: none !important; width: auto !important; float: none !important; }
+html.rz-on :is(.b-popup, #ps-content) .btn-action:hover { background: var(--field-h) !important; }
+html.rz-on :is(.b-popup, #ps-content) .btn-action[disabled] { opacity: .6; cursor: default; }
+html.rz-on :is(.b-popup, #ps-content) .btn-action .loading { display: none; }
+/* fields */
+html.rz-on :is(.b-popup, #ps-content) :is(.b-field, input[type=text], input[type=password], input[type=email], select, textarea) {
+  width: 100% !important; height: 48px !important; padding: 0 14px !important; box-sizing: border-box; border-radius: 4px !important; border: 1.5px solid var(--line) !important;
+  background: var(--s2) !important; color: var(--ink) !important; font: 500 16px/1 var(--text) !important; box-shadow: none !important; }
+html.rz-on :is(.b-popup, #ps-content) textarea { height: 96px !important; padding: 12px 14px !important; line-height: 1.45 !important; resize: vertical; }
+html.rz-on :is(.b-popup, #ps-content) :is(.b-field, input, select, textarea)::placeholder { color: var(--ink3); font-style: normal; }
+html.rz-on :is(.b-popup, #ps-content) :is(.b-field, input, select, textarea):focus { outline: none; border-color: var(--sig) !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--sig) 35%, transparent) !important; }
+html.rz-on :is(.b-popup, #ps-content) :is(.b-field, textarea).error { border-color: var(--m-err) !important; }
+html.rz-on :is(.b-popup, #ps-content) input[type=checkbox] { width: 20px !important; height: 20px !important; margin: 0 !important; accent-color: var(--sig); flex: none; position: static !important; opacity: 1 !important; }
+html.rz-on :is(.b-popup, #ps-content) a:not(.btn) { padding: 0 !important; background: none !important; border: 0 !important; color: var(--ink) !important; text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
+
+/* ===================== Rezka's .b-popup windows (info «Для этой опции нужно авторизоваться», login, trailer, avatar crop) ===================== */
+html.rz-on #overlay { z-index: 2999 !important; background: var(--m-scrim) !important; opacity: 1 !important; -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }
+html.rz-on .b-popup { position: fixed !important; left: 50% !important; top: 50% !important; margin: 0 !important; transform: translate(-50%, -50%); z-index: 3001 !important;
+  width: min(420px, calc(100vw - 48px)) !important; max-height: calc(100vh - 48px); overflow: auto; box-sizing: border-box; padding: 0 !important; border-radius: 14px !important;
+  background: var(--m-modal) !important; color: var(--ink) !important; border: 1px solid var(--line); -webkit-backdrop-filter: var(--glass); backdrop-filter: var(--glass);
+  box-shadow: inset 0 1px 0 var(--rim), 0 30px 70px -24px rgba(0,0,0,.7) !important; font: 400 16px/1.5 var(--text) !important; outline: 0; }
+html.rz-on .b-popup__title { margin: 0 !important; padding: 18px 64px 16px 22px !important; background: var(--field) !important; color: var(--on-sig) !important; border: 0 !important;
+  font: 900 40px/.9 var(--disp) !important; text-transform: uppercase; letter-spacing: -.01em; text-shadow: none !important; }
+html.rz-on .b-popup__content { padding: 22px !important; color: var(--ink2) !important; font: 400 16px/1.5 var(--text) !important; background: none !important; }
+html.rz-on .b-popup__close { position: absolute !important; top: 14px !important; right: 12px !important; width: 40px !important; height: 40px !important; display: grid !important; place-items: center;
+  border-radius: 4px; background: none !important; color: var(--on-sig) !important; cursor: pointer; opacity: 1 !important; }
+html.rz-on .b-popup__close:hover { background: color-mix(in srgb, var(--on-sig) 14%, transparent) !important; }
+html.rz-on .b-popup__close:focus-visible { outline-color: var(--on-sig); }
+/* login: Rezka's rows → label over field, then «Не запоминать меня» + «Затерялся пароль?», then a full-width «Войти» */
+html.rz-on #login-popup .b-login__popup, html.rz-on #login-popup .b-login__popup-form, html.rz-on #register-popup .b-login__popup { float: none !important; width: auto !important; margin: 0 !important; padding: 0 !important; }
+html.rz-on #login-popup .b-popup__content { padding: 0 !important; }
+html.rz-on #login-popup form { display: flex; flex-direction: column; gap: 16px; padding: 22px; }
+html.rz-on #login-popup .row { display: flex; flex-direction: column; gap: 6px; margin: 0 !important; padding: 0 !important; float: none !important; }
+html.rz-on #login-popup .row .label { display: block !important; width: auto !important; float: none !important; padding: 0 !important; color: var(--ink2) !important; font: 600 14px/1.2 var(--text) !important; text-align: left !important; }
+html.rz-on #login-popup .row.clearfix { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 12px; }
+html.rz-on #login-popup .row.clearfix::before, html.rz-on #login-popup .row.clearfix::after { display: none; }
+html.rz-on #login-popup :is(.pull-left, .pull-right) { float: none !important; }
+html.rz-on #login-popup .pull-right { display: contents; }
+html.rz-on #login-popup .reminder { order: 1; font: 600 15px var(--text) !important; }
+html.rz-on #login-popup .hd-label-row { order: 0; display: flex; align-items: center; gap: 10px; margin: 0 !important; }
+html.rz-on #login-popup .hd-label-row label { margin: 0 !important; padding: 0 !important; text-indent: 0 !important; color: var(--ink2) !important; font: 500 15px/1.35 var(--text) !important; cursor: pointer; }
+html.rz-on #login-popup .hd-label-row label::before, html.rz-on #login-popup .hd-label-row label::after { display: none !important; }
+html.rz-on #login-popup .login_button { order: 2; flex-basis: 100%; }
+html.rz-on #login-popup-errors { margin: 0; padding: 0; list-style: none; color: var(--m-err) !important; font: 600 14px/1.4 var(--text); }
+html.rz-on .b-popup .b-login__popup_join { float: none !important; width: auto !important; margin: 0 !important; padding: 16px 22px !important; border-top: 1px solid var(--line); border-left: 0 !important;
+  background: none !important; color: var(--ink2) !important; font: 500 15px/1.4 var(--text) !important; text-align: left !important; }
+
+/* ===================== Rezka's full-screen layer: trailer, «Сообщи нам», bookmark folders, messages ===================== */
+html.rz-on #ps-overlay-wrap { background: var(--m-scrim) !important; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+html.rz-on #ps-content-holder { min-height: 100%; box-sizing: border-box; display: grid; place-items: center; padding: 48px 24px !important; }
+html.rz-on #ps-content { width: 100%; display: grid; justify-items: center; }
+html.rz-on #ps-content > div { width: min(560px, 100%); max-width: none !important; margin: 0 !important; padding: 0 !important; box-sizing: border-box; overflow: hidden; border-radius: 14px; background: var(--m-modal); color: var(--ink2);
+  border: 1px solid var(--line); -webkit-backdrop-filter: var(--glass); backdrop-filter: var(--glass); box-shadow: inset 0 1px 0 var(--rim), 0 30px 70px -24px rgba(0,0,0,.7);
+  font: 400 16px/1.5 var(--text); animation: rz-in .2s var(--ease); }
+html.rz-on #ps-content > div:not(#ps-trailer-content, #ps-report-content, #ps-infomessage-content) { padding: 22px !important; }
+html.rz-on #ps-content > div:empty { display: none; }
+/* every window's title: the colour field */
+html.rz-on :is(#ps-trailer-title, #ps-report-title, #ps-infomessage-title) { margin: 0 !important; padding: 18px 72px 16px 22px !important; background: var(--field) !important; color: var(--on-sig) !important;
+  font: 900 34px/.95 var(--disp) !important; text-transform: uppercase; letter-spacing: -.005em; text-align: left !important; }
+html.rz-on :is(#ps-trailer-title, #ps-report-title) small { display: block; margin-top: 8px; color: var(--on-sig2) !important; font: 600 14px/1.35 var(--text) !important; text-transform: none; letter-spacing: 0; }
+html.rz-on :is(#ps-trailer-title, #ps-report-title) small b { color: var(--on-sig) !important; font-weight: 700; }
+/* the close button: on the field, top right of the window's corner of the screen */
+html.rz-on #ps-close { top: 20px !important; right: 20px !important; width: 44px !important; height: 44px !important; display: grid !important; place-items: center; padding: 0;
+  border-radius: 4px !important; background: var(--blk) !important; color: #EEF0F8 !important; cursor: pointer; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+html.rz-on #ps-close:hover, html.rz-on #ps-close:focus-visible { background: var(--ink) !important; color: var(--bg) !important; }
+html.rz-on #ps-close:focus-visible { outline: 2px solid var(--acc) !important; outline-offset: 3px; }
+/* trailer: field title, the YouTube player 16:9, description, «Смотреть онлайн» */
+html.rz-on #ps-content > #ps-trailer-content { width: min(880px, 100%); display: flex; flex-direction: column; }
+html.rz-on #ps-trailer-title { order: -1; }
+html.rz-on #ps-trailer-player { position: relative; width: 100% !important; height: auto !important; aspect-ratio: 16 / 9; background: #05060C; margin: 0 !important; }
+html.rz-on #ps-trailer-player :is(iframe, video, object, embed) { position: absolute; inset: 0; width: 100% !important; height: 100% !important; border: 0; }
+html.rz-on #ps-trailer-description { padding: 16px 22px !important; margin: 0 !important; max-height: 9.5em; overflow: auto; color: var(--ink2) !important; font: 400 15px/1.5 var(--text) !important; }
+html.rz-on #ps-trailer-watchonline { padding: 0 22px 22px !important; margin: 0 !important; text-align: left !important; }
+html.rz-on #ps-trailer-watchonline a { display: inline-flex !important; align-items: center; height: 48px; padding: 0 22px; border-radius: 4px; background: var(--field) !important; color: var(--on-sig) !important;
+  font: 800 20px/1 var(--disp) !important; text-transform: uppercase; letter-spacing: .03em; text-decoration: none !important; }
+html.rz-on #ps-trailer-watchonline a:hover { background: var(--field-h) !important; }
+/* «Сообщи нам»: context under the title, Rezka's warning as a note, issues as a radio list */
+html.rz-on #ps-content > #ps-report-content { width: min(560px, 100%); }
+html.rz-on #ps-report-title-info { margin: 22px 22px 0 !important; padding: 14px 16px !important; border-radius: 6px; color: var(--ink) !important; font: 500 14px/1.45 var(--text) !important;
+  background: color-mix(in srgb, #F5A524 14%, transparent) !important; box-shadow: inset 0 0 0 1.5px color-mix(in srgb, #F5A524 55%, transparent); }
+html.rz-on #ps-report-title-info u { font-weight: 700; text-decoration: none; }
+html.rz-on :is(#ps-report-issues, #ps-report-issues-comment) { list-style: none; margin: 0 !important; padding: 16px 12px 0 !important; display: flex; flex-direction: column; gap: 2px; }
+html.rz-on li.report-item { position: relative; display: flex !important; align-items: center; gap: 12px; min-height: 44px; margin: 0 !important; padding: 8px 10px !important; box-sizing: border-box; border-radius: 4px;
+  background: none !important; border: 0 !important; color: var(--ink2) !important; font: 500 15px/1.35 var(--text) !important; cursor: pointer; }
+html.rz-on li.report-item::before { content: ''; flex: none; width: 20px; height: 20px; box-sizing: border-box; border-radius: 50%; box-shadow: inset 0 0 0 2px var(--ink3); }
+html.rz-on li.report-item:hover { background: var(--hover) !important; color: var(--ink) !important; }
+html.rz-on li.report-item.active { color: var(--ink) !important; background: var(--s2) !important; }
+html.rz-on li.report-item.active::before { box-shadow: inset 0 0 0 6px var(--sig); background: var(--on-sig); }
+html.rz-on li.report-item > i { display: none !important; }
+html.rz-on #ps-report-text { display: block; margin: 6px 0 4px !important; }
+html.rz-on #ps-report-description { padding: 16px 22px 0 !important; margin: 0 !important; color: var(--ink3) !important; font: 400 14px/1.5 var(--text) !important; }
+html.rz-on #ps-report-holderbuttons { padding: 18px 22px 22px !important; margin: 0 !important; text-align: left !important; }
+/* messages shown in the layer */
+html.rz-on #ps-infomessage-body { padding: 22px !important; color: var(--ink2) !important; }
+
+/* ===================== Title page: bookmarks popover under «В закладки» ===================== */
+html.rz-on .b-sideactions__fav #user-favorites-holder { position: absolute !important; left: 0 !important; top: calc(100% + 8px) !important; z-index: 60; width: 400px !important; max-width: calc(100vw - 32px);
+  box-sizing: border-box; margin: 0 !important; padding: 18px !important; border-radius: 14px; background: var(--m-modal) !important; color: var(--ink2) !important; border: 1px solid var(--line) !important;
+  -webkit-backdrop-filter: var(--glass); backdrop-filter: var(--glass); box-shadow: inset 0 1px 0 var(--rim), 0 24px 60px -24px rgba(0,0,0,.7) !important; font: 400 15px/1.5 var(--text) !important; text-align: left !important; }
+html.rz-on .b-sideactions__fav #user-favorites-holder[style*="block"] { display: flex !important; flex-direction: column; gap: 14px; }
+html.rz-on #user-favorites-list { display: flex; flex-direction: column; gap: 2px; margin: 0 !important; padding: 0 !important; background: none !important; max-height: 50vh; overflow: auto; }
+html.rz-on #user-favorites-list :is(.empty-info, .start-info) { text-align: left !important; margin: 0 0 4px !important; padding: 0 !important; color: var(--ink2) !important; font: 400 15px/1.5 var(--text) !important; background: none !important; }
+html.rz-on #user-favorites-list .hd-label-row { display: flex !important; align-items: center; gap: 10px; min-height: 44px; margin: 0 !important; padding: 0 10px !important; border-radius: 4px; }
+html.rz-on #user-favorites-list .hd-label-row:hover { background: var(--hover); }
+html.rz-on #user-favorites-list .hd-label-row input[type=checkbox] { width: 20px; height: 20px; margin: 0; accent-color: var(--sig); position: static !important; opacity: 1 !important; flex: none; }
+html.rz-on #user-favorites-list .hd-label-row label { flex: 1; margin: 0 !important; padding: 0 !important; text-indent: 0 !important; color: var(--ink) !important; font: 600 16px/1.3 var(--text) !important; cursor: pointer; }
+html.rz-on #user-favorites-list .hd-label-row label::before, html.rz-on #user-favorites-list .hd-label-row label::after { display: none !important; }
+html.rz-on .b-sideactions__fav .b-userset__fav_addcat_wrapper { display: flex; flex-direction: column; gap: 10px; margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; }
+html.rz-on .b-sideactions__fav #addcat-fav-add a { display: flex !important; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 4px; box-shadow: inset 0 0 0 1.5px var(--line);
+  color: var(--ink) !important; font: 600 15px/1.2 var(--text) !important; text-decoration: none !important; }
+html.rz-on .b-sideactions__fav #addcat-fav-add a:hover { background: var(--hover); }
+html.rz-on .b-sideactions__fav #addcat-fav-form { gap: 8px; flex-wrap: wrap; margin: 0 !important; padding: 0 !important; background: none !important; }
+html.rz-on .b-sideactions__fav #addcat-fav-form[style*="block"] { display: flex !important; }
+html.rz-on .b-sideactions__fav #addcat-fav-form :is(#addcat-fav-name, #addcat-fav-addbt) { height: 44px !important; }
+html.rz-on .b-sideactions__fav #addcat-fav-form #addcat-fav-addbt { padding: 0 16px !important; font-size: 18px !important; }
+html.rz-on .b-sideactions__fav #addcat-fav-addbt::before { display: none !important; } /* title.css gives every .btn here the bookmark icon */
+html.rz-on #addcat-fav-close { align-self: flex-end; display: inline-flex !important; align-items: center; min-height: 40px; border: 0 !important; color: var(--ink2) !important; font: 600 15px var(--text) !important;
+  text-decoration: underline !important; text-underline-offset: 3px; background: none !important; }
+html.rz-on #addcat-fav-close:hover { color: var(--ink) !important; }
+html.rz-on .b-sideactions__fav #user-favorites-holder > .loader { position: absolute; inset: 0; border-radius: 14px; background-color: color-mix(in srgb, var(--bg) 60%, transparent) !important; }
+
+/* ===================== Rezka's tooltips (tooltipster) ===================== */
+html.rz-on .tooltipster-default { border-radius: 4px !important; border: 0 !important; background: var(--pop) !important; color: var(--ink) !important; box-shadow: var(--sh) !important; }
+html.rz-on .tooltipster-default .tooltipster-content { padding: 8px 10px !important; font: 600 13px/1.35 var(--text) !important; }
+html.rz-on .tooltipster-default .tooltipster-arrow { display: none !important; }
+
+/* ===================== Standalone /login/, /registration/, /lost/: Rezka's card as a glass window ===================== */
+html.rz-on body > .page { min-height: 0 !important; padding: 64px 24px 24px !important; background: none !important; }
+html.rz-on body > .page > .brand { display: none !important; } /* the «HD Premium» logo: our header carries the brand */
+html.rz-on body > .page > .footer { margin: 28px auto 0 !important; padding: 0 !important; background: none !important; color: var(--ink3) !important; font: 400 13px/1.5 var(--text) !important; text-align: center; }
+html.rz-on body > .page .card { width: min(420px, 100%) !important; max-width: none !important; margin: 0 auto !important; padding: 0 !important; border-radius: 14px !important; overflow: hidden;
+  background: var(--m-modal) !important; color: var(--ink2) !important; border: 1px solid var(--line) !important; -webkit-backdrop-filter: var(--glass); backdrop-filter: var(--glass);
+  box-shadow: inset 0 1px 0 var(--rim), 0 30px 70px -24px rgba(0,0,0,.7) !important; animation: none !important; }
+html.rz-on body > .page .card-flip { box-shadow: none !important; background: none !important; }
+html.rz-on body > .page .card-face { padding: 0 0 22px !important; background: var(--m-modal) !important; border-radius: 0 !important; box-shadow: none !important; display: flex; flex-direction: column; gap: 16px; text-align: left !important; }
+html.rz-on body > .page .card-face > .title { margin: 0 !important; padding: 18px 22px 16px !important; background: var(--field) !important; color: var(--on-sig) !important; -webkit-text-fill-color: currentColor;
+  font: 900 40px/.9 var(--disp) !important; text-transform: uppercase; letter-spacing: -.01em; text-align: left !important; }
+html.rz-on body > .page .card-face > :not(.title) { margin-left: 22px !important; margin-right: 22px !important; }
+html.rz-on body > .page .subtitle, html.rz-on body > .page .restore-message, html.rz-on body > .page .restore-message p { margin-top: 0 !important; margin-bottom: 0 !important; color: var(--ink2) !important; font: 400 16px/1.5 var(--text) !important; text-align: left !important; }
+html.rz-on body > .page .restore-message { display: flex; flex-direction: column; gap: 12px; }
+html.rz-on body > .page .restore-toggle { color: var(--ink) !important; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font-weight: 600 !important; }
+html.rz-on body > .page form { display: flex; flex-direction: column; gap: 16px; margin: 0 !important; }
+html.rz-on body > .page .field { position: relative; margin: 0 !important; }
+html.rz-on body > .page .input { width: 100% !important; height: 48px !important; padding: 0 14px !important; box-sizing: border-box; border-radius: 4px !important; border: 1.5px solid var(--line) !important;
+  background: var(--s2) !important; color: var(--ink) !important; font: 500 16px/1 var(--text) !important; box-shadow: none !important; }
+html.rz-on body > .page .field--password .input { padding-right: 52px !important; }
+html.rz-on body > .page .input::placeholder { color: var(--ink3) !important; }
+html.rz-on body > .page .input:focus { outline: none; border-color: var(--sig) !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--sig) 35%, transparent) !important; }
+html.rz-on body > .page .eye-toggle { position: absolute !important; right: 4px !important; top: 4px !important; width: 40px !important; height: 40px !important; display: grid !important; place-items: center;
+  border-radius: 4px; background: none !important; color: var(--ink2) !important; transform: none !important; }
+html.rz-on body > .page .eye-toggle:hover { background: var(--hover) !important; color: var(--ink) !important; }
+html.rz-on body > .page .field-error, html.rz-on body > .page .otp-error { margin: 6px 0 0 !important; color: var(--m-err) !important; font: 600 14px/1.4 var(--text) !important; }
+html.rz-on body > .page .field-error:empty { display: none; }
+html.rz-on body > .page .pw-rules { margin-top: 10px !important; }
+html.rz-on body > .page .pw-strength { height: 4px; border-radius: 2px; background: var(--s2) !important; overflow: hidden; }
+html.rz-on body > .page .pw-strength-bar { background: var(--sig) !important; }
+html.rz-on body > .page .pw-rules ul { list-style: none; margin: 10px 0 0 !important; padding: 0 !important; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; }
+html.rz-on body > .page .pw-rules li { display: flex; gap: 6px; align-items: center; color: var(--ink3) !important; font: 500 14px/1.3 var(--text) !important; }
+html.rz-on body > .page .pw-rules li:is(.ok, .valid, .is-valid, .passed, .done) { color: var(--ink) !important; }
+html.rz-on body > .page .checkbox { display: flex !important; align-items: center; gap: 10px; color: var(--ink2) !important; font: 500 15px/1.35 var(--text) !important; cursor: pointer; }
+html.rz-on body > .page .checkbox-box { border-color: var(--ink3) !important; background-color: var(--s2) !important; border-radius: 3px !important; }
+html.rz-on body > .page .checkbox input:checked + .checkbox-box { background-color: var(--sig) !important; border-color: var(--sig) !important; }
+html.rz-on body > .page .checkbox input:focus-visible + .checkbox-box { outline: 2px solid var(--acc); outline-offset: 2px; }
+html.rz-on body > .page :is(.link, .restore-message a) { color: var(--ink) !important; text-decoration: underline !important; text-underline-offset: 3px; font-weight: 600; -webkit-text-fill-color: currentColor; background: none !important; }
+html.rz-on body > .page .btn-primary { width: 100% !important; height: 48px !important; border: 0 !important; border-radius: 4px !important; background: var(--field) !important; color: var(--on-sig) !important;
+  box-shadow: none !important; font: 800 20px/1 var(--disp) !important; text-transform: uppercase; letter-spacing: .03em; transform: none !important; }
+html.rz-on body > .page .btn-primary:hover { background: var(--field-h) !important; }
+html.rz-on body > .page .form-footer { margin: 6px -22px -22px !important; padding: 16px 22px !important; border-top: 1px solid var(--line); color: var(--ink2) !important; font: 500 15px/1.4 var(--text) !important; text-align: left !important; }
+html.rz-on body > .page .card-face > .form-footer { margin: 0 !important; padding: 16px 22px 0 !important; }
+html.rz-on body > .page :is(.otp-box, .otp-single) { border-radius: 4px !important; border: 1.5px solid var(--line) !important; background: var(--s2) !important; color: var(--ink) !important; font: 700 22px/1 var(--text) !important; }
+html.rz-on body > .page .otp-icon-wrap { color: var(--ink) !important; background: var(--s2) !important; }

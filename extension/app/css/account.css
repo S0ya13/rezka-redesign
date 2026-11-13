@@ -1,45 +1,184 @@
-/* account.css — ported from design D; owned by app/account.js. Rewrite to the T design (canvas «Раунд 3/4»). */
-/* ===================== Bookmarks / history ===================== */
-.rz-switch { display: inline-flex; gap: 2px; padding: 4px; margin: -12px 0 28px; border-radius: 999px; background: var(--rz-s1); box-shadow: inset 0 0 0 1px var(--rz-hair); font-family: var(--rz-text); }
-.rz-switch a { height: 38px; padding: 0 16px; display: inline-flex; align-items: center; border-radius: 999px; color: var(--rz-ink2) !important; font-size: 14px; font-weight: 500; text-decoration: none !important; }
-.rz-switch a[aria-current] { background: var(--rz-ink); color: var(--rz-bg) !important; font-weight: 600; }
-html.rz-list .b-favorites_content__sidebar { position: absolute !important; right: 0; top: 0; width: 320px !important; float: none !important; margin: 0 !important; }
-html.rz-list .b-content__inline_inner:has(.b-favorites_content__sidebar) { padding-right: 360px !important; }
-.b-favorites_content__cats_nolist, .b-favorites_content__cats_list { padding: 18px !important; border-radius: 20px; background: var(--rz-s1) !important; box-shadow: inset 0 0 0 1px var(--rz-hair); color: var(--rz-ink2) !important; font: 14px/1.6 var(--rz-text) !important; border: 0 !important; }
-.b-favorites_content__cats_nolist .title { display: block; margin-bottom: 6px; color: var(--rz-ink) !important; font: 600 15px var(--rz-text) !important; text-transform: none !important; }
-.b-favorites_content__cats_list_item { border-radius: 12px; }
-.b-favorites_content__cats_list_item a { color: var(--rz-ink2) !important; }
-.b-favorites_content__cats_list_item.active a, .b-favorites_content__cats_list_item a:hover { color: var(--rz-ink) !important; }
-.b-userset__fav_holder_data a, .b-favorites_content__sidebar a { color: var(--rz-ink2) !important; }
-html.rz-list .b-info__message, html.rz-list .b-info__message * { color: var(--rz-ink3) !important; background: none !important; border: 0 !important; font-family: var(--rz-text) !important; }
-#videosaves-list { border: 0 !important; background: none !important; font-family: var(--rz-text); }
-#videosaves-list .b-videosaves__list_item { display: grid !important; grid-template-columns: minmax(0,1fr) 300px 110px 90px; align-items: center; gap: 20px; padding: 12px 14px !important; margin: 0 -14px; border: 0 !important; border-radius: 16px; background: none !important; }
-#videosaves-list .b-videosaves__list_item:hover { background: var(--rz-s1) !important; }
-#videosaves-list .b-videosaves__list_item > div { border: 0 !important; padding: 0 !important; background: none !important; float: none !important; width: auto !important; text-align: left !important; }
-#videosaves-list .b-videosaves__list_item:first-child { display: none !important; }
-#videosaves-list .td.date { order: 3; color: var(--rz-ink3) !important; font-size: 13px; }
-#videosaves-list .td.title { order: 1; display: grid !important; grid-template-columns: 56px minmax(0,1fr); column-gap: 16px; align-items: center; }
-#videosaves-list .td.title a { color: var(--rz-ink) !important; font-weight: 600; font-size: 16px; text-decoration: none !important; }
-#videosaves-list .td.title small { grid-column: 2; color: var(--rz-ink3) !important; font-size: 13px; }
-#videosaves-list .td.title small b { color: var(--rz-ink3) !important; font-weight: 500; }
-.rz-hcover { grid-row: 1 / span 2; width: 56px; height: 84px; object-fit: cover; border-radius: 10px; }
-#videosaves-list .td.info { order: 2; color: var(--rz-ink2) !important; font-size: 14px; }
-#videosaves-list .td.info .info-holder br { display: none; }
-#videosaves-list .td.info a.new-episode { display: inline-block; margin-top: 6px; padding: 4px 10px; border-radius: 999px; background: rgba(242,169,59,.14) !important; color: var(--rz-amb) !important; font-size: 13px; font-weight: 600; text-decoration: none !important; }
-#videosaves-list .td.info a.new-episode b { color: inherit !important; }
-#videosaves-list .td.controls { order: 4; }
-#videosaves-list .controls-holder { display: flex; gap: 4px; justify-content: flex-end; }
-#videosaves-list .controls-holder a { width: 36px; height: 36px; border-radius: 50%; background-color: rgba(255,255,255,.06) !important; opacity: .85; }
+/* account.css — history (/continue/), bookmarks (/favorites/), profile settings (/settings/ → /user/<id>/). Owned by app/account.js.
+   Design: canvas «Раунд 4» U-Library, U-Settings. Pages carry html.rz-account (main.js). */
 
-html.rz-list .b-info__title { color: var(--rz-ink2) !important; font: 600 15px var(--rz-text) !important; }
-#videosaves-list .td.title { align-content: center; row-gap: 4px; }
-#videosaves-list .td.title { grid-template-rows: min-content min-content !important; align-content: center !important; }
-#videosaves-list .controls-holder a { background: rgba(255,255,255,.06) center / 18px no-repeat !important; opacity: 1; transition: background-color .2s; }
-#videosaves-list .controls-holder a:hover { background-color: rgba(255,255,255,.12) !important; }
-#videosaves-list .controls-holder a.view { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23CBBFAF' stroke-width='1.7'%3E%3Cpath d='M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E") !important; }
-#videosaves-list .controls-holder a.delete { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23CBBFAF' stroke-width='1.8' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6 6 18'/%3E%3C/svg%3E") !important; }
-#videosaves-list .td.title { grid-template-rows: 1fr auto auto 1fr !important; }
-#videosaves-list .td.title > a { grid-row: 2; grid-column: 2; }
-#videosaves-list .td.title > small { grid-row: 3; }
-#videosaves-list .rz-hcover { grid-row: 1 / span 4; }
-#videosaves-list .controls-holder { visibility: visible !important; }
+/* ===================== Page frame: our glass head instead of Rezka's title ===================== */
+html.rz-account #main { padding-top: 0 !important; }
+html.rz-account .b-container.b-content { padding-top: 40px !important; }
+html.rz-account .b-content__htitle, html.rz-account .b-container.b-content > .b-wrapper.nopadd { display: none !important; }
+html.rz-account .b-content__inline, html.rz-account .b-content__inline_inner { float: none !important; width: auto !important; margin: 0 !important; padding: 0 !important; background: none !important; }
+html.rz-account .b-content__inline_inner::before, html.rz-account .b-content__inline_inner::after { display: none !important; }
+
+/* «История · 28 / Закладки» on the colour field */
+.rz-ftabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.rz-ftab { height: 64px; padding: 0 18px; border-radius: 4px; display: inline-flex; align-items: center; gap: 12px; box-sizing: border-box;
+  font: 900 44px/1 var(--disp) !important; text-transform: uppercase; color: var(--on-sig2) !important; text-decoration: none !important; }
+.rz-ftab:hover { background: color-mix(in srgb, var(--on-sig) 12%, transparent); color: var(--on-sig) !important; }
+.rz-ftab[aria-current] { background: var(--blk); color: var(--acc) !important; }
+.rz-ftab small { font: 800 22px/1 var(--disp); opacity: .85; }
+
+.rz-hint { font: 400 14px/1.45 var(--text); color: var(--ink3); }
+.rz-lbl2 { margin: 0; font: 800 16px/1 var(--disp); text-transform: uppercase; letter-spacing: .06em; color: var(--ink3); }
+.rz-card-h { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; }
+.rz-card-h h2 { margin: 0; font-size: 52px; color: var(--ink); }
+
+/* ===================== Guest: invite to log in ===================== */
+html.rz-account .rz-guest > :not(.rz-invite) { display: none !important; }
+.rz-invite { max-width: 780px; margin: 32px auto 0; padding: 48px; box-sizing: border-box; border-radius: 14px; display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
+.rz-invite h2 { margin: 0; font-size: 64px; color: var(--ink); }
+.rz-invite p { margin: 0; max-width: 60ch; font: 400 17px/1.55 var(--text); color: var(--ink2); }
+.rz-invite .rz-invite-k { font: 800 16px/1.2 var(--disp); text-transform: uppercase; letter-spacing: .05em; color: var(--ink3); }
+.rz-invite .rz-row { display: flex; flex-wrap: wrap; gap: 10px; }
+
+/* ===================== History: Rezka's rows as a dated list ===================== */
+#videosaves-list { border: 0 !important; background: none !important; margin: 0 !important; padding: 0 !important; font-family: var(--text); }
+#videosaves-list .b-videosaves__list_item:not([id]) { display: none !important; } /* Rezka's column header */
+.rz-month { display: flex; align-items: baseline; gap: 14px; margin: 56px 0 4px; padding-bottom: 12px; border-bottom: 2px solid var(--ink); }
+.rz-month:first-child, #videosaves-list > .b-videosaves__list_item:not([id]) + .rz-month { margin-top: 8px; }
+.rz-month b { font-size: 56px; color: var(--ink); }
+.rz-month span { color: var(--ink3); font: 600 15px/1 var(--text); }
+#videosaves-list .b-videosaves__list_item[id] { display: grid !important; grid-template-columns: 110px 64px minmax(0, 1.3fr) minmax(0, 1fr) 250px; gap: 24px; align-items: center;
+  padding: 14px 10px !important; margin: 0 !important; height: auto !important; border: 0 !important; border-bottom: 1px solid var(--line) !important; border-radius: 4px; background: none !important; }
+#videosaves-list .b-videosaves__list_item[id]:hover { background: var(--hover) !important; }
+#videosaves-list .b-videosaves__list_item[id] > .td { float: none !important; width: auto !important; height: auto !important; padding: 0 !important; margin: 0 !important; border: 0 !important;
+  background: none !important; text-align: left !important; min-width: 0; color: var(--ink2) !important; font-family: var(--text) !important; }
+#videosaves-list .td.date { font: 800 20px/1.1 var(--disp) !important; text-transform: uppercase; letter-spacing: .02em; color: var(--ink2) !important; }
+.rz-hcov { display: block; width: 64px; height: 96px; border-radius: 4px; object-fit: cover; background: var(--s2); }
+.rz-hcov-none { display: grid; place-items: center; color: var(--ink3); font: 900 26px/1 var(--disp); text-transform: uppercase; }
+#videosaves-list .td.title > a { color: var(--ink) !important; font: 700 19px/1.25 var(--text) !important; text-decoration: none !important; }
+#videosaves-list .td.title > a:hover { text-decoration: underline !important; text-underline-offset: 4px; }
+.rz-hy { margin-top: 6px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font: 400 15px/1.3 var(--text); color: var(--ink3); }
+.rz-done, .rz-hy::after { font: 800 13px/1 var(--disp); text-transform: uppercase; letter-spacing: .06em; padding: 5px 7px 4px; border-radius: 2px; box-shadow: inset 0 0 0 1.5px var(--line); color: var(--ink2); }
+#videosaves-list .td.info { display: flex !important; flex-direction: column; align-items: flex-start; gap: 5px; }
+.rz-hep { font: 900 26px/1 var(--disp); text-transform: uppercase; color: var(--ink); }
+.rz-htr { font: 500 15px/1.3 var(--text); color: var(--ink2); }
+.rz-htr:empty { display: none; }
+#videosaves-list .td.info .info-holder { display: block; margin: 0 !important; padding: 0 !important; background: none !important; }
+#videosaves-list .td.info a.new-episode, #videosaves-list .td.info a.new-episode b { display: inline; padding: 0 !important; margin: 0 !important; background: none !important; border: 0 !important;
+  color: var(--ink3) !important; font: 600 14px/1.3 var(--text) !important; text-decoration: none !important; }
+#videosaves-list .td.info a.new-episode:hover { color: var(--ink) !important; text-decoration: underline !important; text-underline-offset: 3px; }
+/* watched: dimmed, with a text chip (Rezka toggles .watched on the button without a reload) */
+#videosaves-list .b-videosaves__list_item[id], #videosaves-list .b-videosaves__list_item[id] > .td { opacity: 1 !important; }
+#videosaves-list .b-videosaves__list_item:is(.watched-row, :has(a.view.watched)) :is(.td.title > a, .rz-hep) { opacity: .6; }
+#videosaves-list .b-videosaves__list_item:is(.watched-row, :has(a.view.watched)) .rz-hy::after { content: 'просмотрено'; box-shadow: none; background: var(--s2); }
+/* controls: «Продолжить» + Rezka's mark/delete buttons as icon buttons, always visible */
+#videosaves-list .td.controls { display: flex !important; align-items: center; justify-content: flex-end; gap: 6px; }
+#videosaves-list .controls-holder { display: flex !important; gap: 6px; visibility: visible !important; opacity: 1 !important; position: static !important; width: auto !important; background: none !important; }
+#videosaves-list .controls-holder a { position: relative; display: grid !important; place-items: center; width: 44px !important; height: 44px !important; margin: 0 !important; border-radius: 4px;
+  background: none !important; color: var(--ink2) !important; opacity: 1 !important; text-indent: 0 !important; overflow: visible !important; }
+#videosaves-list .controls-holder a::before { content: ''; width: 22px; height: 22px; background: currentColor; -webkit-mask: var(--rz-i) center / contain no-repeat; mask: var(--rz-i) center / contain no-repeat; }
+#videosaves-list .controls-holder a:hover { background: var(--hover) !important; color: var(--ink) !important; }
+#videosaves-list .controls-holder a.view { --rz-i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='8.5'/%3E%3Cpath d='m8 12.2 2.7 2.6L16 9.5'/%3E%3C/svg%3E"); }
+#videosaves-list .controls-holder a.view.watched { background: var(--s2) !important; color: var(--ink) !important; }
+#videosaves-list .controls-holder a.delete { --rz-i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 6.5h15M9.5 6.5V4.5h5v2M6.5 6.5l1 13h9l1-13M10.5 10.5v6M13.5 10.5v6'/%3E%3C/svg%3E"); }
+#videosaves-list .controls-holder a.loading { opacity: .5 !important; }
+.rz-hgo { white-space: nowrap; }
+
+/* ===================== Bookmarks: folder rail + filters + grid ===================== */
+html.rz-account .b-content__inline_inner:has(> .b-favorites_content__sidebar) { display: grid !important; grid-template-columns: 300px minmax(0, 1fr); gap: 24px 40px; align-items: start; }
+html.rz-account .b-favorites_content__sidebar { grid-row: 1 / span 2; position: static !important; float: none !important; width: auto !important; margin: 0 !important; padding: 0 !important; }
+html.rz-account .b-content__inline_inner > .b-content__main_filters { grid-column: 2; margin: 0 !important; align-items: center; }
+html.rz-account .b-content__inline_inner > .b-favorites_content__holder { grid-column: 2; }
+/* sort and type links as chips (base.css makes Rezka's sort links big tabs elsewhere) */
+html.rz-account .b-content__main_filters, html.rz-account .b-content__main_filters > li { gap: 6px !important; }
+html.rz-account .b-content__main_filters a.rz-chip { height: 40px !important; padding: 0 16px !important; border-radius: 999px !important; background: transparent !important; color: var(--ink2) !important;
+  font: 600 15px/1 var(--text) !important; text-transform: none; box-shadow: inset 0 0 0 1.5px var(--line); }
+html.rz-account .b-content__main_filters a.rz-chip:hover { color: var(--ink) !important; box-shadow: inset 0 0 0 1.5px var(--ink3); }
+html.rz-account .b-content__main_filters a.rz-chip[aria-current] { background: var(--ink) !important; color: var(--bg) !important; box-shadow: none; }
+html.rz-account .b-content__filters_types { display: flex !important; flex-wrap: wrap; align-items: center; gap: 6px; margin-left: 18px !important; }
+html.rz-account .b-content__filters_types .filter-text { order: -1; height: auto !important; padding: 0 8px 0 0 !important; background: none !important; color: var(--ink3) !important;
+  font: 800 16px/1 var(--disp) !important; text-transform: uppercase; letter-spacing: .05em; }
+/* the rail: Rezka's folder list and «Создать новый раздел» */
+html.rz-account #user-favorites-holder { display: flex !important; flex-direction: column; gap: 2px; width: auto !important; padding: 10px; border-radius: 14px; position: relative; text-align: left !important;
+  background: var(--s1); border: 1px solid var(--line); -webkit-backdrop-filter: var(--glass); backdrop-filter: var(--glass); box-shadow: inset 0 1px 0 var(--rim), var(--sh); }
+html.rz-account .b-favorites_content__cats_list { display: flex; flex-direction: column; gap: 2px; padding: 0 !important; margin: 0 !important; background: none !important; border: 0 !important; }
+html.rz-account .b-favorites_content__cats_list_item { position: relative; display: flex !important; align-items: center; gap: 6px; min-height: 48px; padding: 0 4px 0 6px !important; margin: 0 !important; float: none !important;
+  border-radius: 6px; background: none !important; border: 0 !important; }
+html.rz-account .b-favorites_content__cats_list_item:hover { background: var(--hover) !important; }
+html.rz-account .b-favorites_content__cats_list_item.active { background: var(--field) !important; }
+html.rz-account .b-favorites_content__cats_list_item .draggable { color: var(--ink3) !important; font-size: 8px; line-height: .8; cursor: grab; }
+html.rz-account .b-favorites_content__cats_list_link { flex: 1; min-width: 0; display: flex !important; align-items: center; gap: 10px; min-height: 48px; color: var(--ink) !important; font: 600 16px/1.2 var(--text) !important; text-decoration: none !important; }
+html.rz-account .b-favorites_content__cats_list_item.active :is(.b-favorites_content__cats_list_link, .draggable, .edit-cat) { color: var(--on-sig) !important; }
+html.rz-account .b-favorites_content__cats_list_link .num-holder { margin-left: auto; font: 900 24px/1 var(--disp) !important; color: inherit !important; opacity: .85; }
+html.rz-account .b-favorites_content__cats_list_link .num-holder b { font: inherit !important; color: inherit !important; }
+html.rz-account .b-userset__fav_addcat_wrapper { margin-top: 6px; }
+html.rz-account #addcat-fav-add a { display: flex !important; align-items: center; min-height: 48px; padding: 0 14px; border-radius: 6px; box-shadow: inset 0 0 0 1.5px var(--line);
+  color: var(--ink2) !important; font: 600 16px/1.2 var(--text) !important; text-decoration: none !important; }
+html.rz-account #addcat-fav-add a:hover { color: var(--ink) !important; background: var(--hover); }
+html.rz-account #user-favorites-holder > .loader { position: absolute; inset: 0; border-radius: 14px; background-color: color-mix(in srgb, var(--bg) 60%, transparent) !important; }
+/* nothing in the bookmarks yet: the rail turns into one glass invite with Rezka's text and its «new folder» form */
+html.rz-account .b-content__inline_inner.rz-fav-empty { display: block !important; }
+html.rz-account .rz-fav-empty > :not(.b-favorites_content__sidebar) { display: none !important; }
+html.rz-account .rz-fav-empty .b-favorites_content__sidebar { width: auto !important; }
+html.rz-account .rz-fav-empty #user-favorites-holder { max-width: 780px; margin: 32px auto 0; padding: 48px; box-sizing: border-box; gap: 18px; }
+html.rz-account .b-favorites_content__cats_nolist { display: flex; flex-direction: column; gap: 18px; padding: 0 !important; margin: 0 !important; background: none !important; border: 0 !important;
+  color: var(--ink2) !important; font: 400 17px/1.55 var(--text) !important; max-width: 60ch; text-align: left !important; }
+html.rz-account .b-favorites_content__cats_nolist .title { display: block; text-align: left !important; color: var(--ink) !important; font: 900 64px/.86 var(--disp) !important; text-transform: uppercase; letter-spacing: -.01em; }
+html.rz-account .rz-fav-empty #addcat-fav-add { display: none !important; }
+html.rz-account .rz-fav-empty #addcat-fav-form { display: flex !important; }
+html.rz-account #addcat-fav-form { gap: 10px; flex-wrap: wrap; width: 100%; max-width: 560px; margin: 0 !important; padding: 0 !important; background: none !important; }
+html.rz-account #addcat-fav-form[style*="block"] { display: flex !important; margin-top: 8px !important; }
+/* the form's field and button: shared with the title page's bookmarks popover (modals.css) */
+:is(html.rz-account, #user-favorites-holder) #addcat-fav-name { flex: 1; min-width: 0; width: auto !important; height: 48px !important; padding: 0 14px !important; box-sizing: border-box; border-radius: 4px !important;
+  border: 1.5px solid var(--line) !important; background: var(--s2) !important; color: var(--ink) !important; font: 500 16px/1 var(--text) !important; box-shadow: none !important; }
+:is(html.rz-account, #user-favorites-holder) #addcat-fav-name::placeholder { color: var(--ink3); }
+:is(html.rz-account, #user-favorites-holder) #addcat-fav-name:focus { outline: none; border-color: var(--sig) !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--sig) 35%, transparent) !important; }
+:is(html.rz-account, #user-favorites-holder) #addcat-fav-addbt { flex: none; width: auto !important; height: 48px !important; padding: 0 22px !important; margin: 0 !important; border: 0 !important; border-radius: 4px !important; cursor: pointer;
+  background: var(--field) !important; color: var(--on-sig) !important; font: 800 20px/1 var(--disp) !important; text-transform: uppercase; letter-spacing: .03em; box-shadow: none !important; text-shadow: none !important; }
+:is(html.rz-account, #user-favorites-holder) #addcat-fav-addbt:hover { background: var(--field-h) !important; }
+:is(html.rz-account, #user-favorites-holder) #addcat-fav-form .errors:empty { display: none !important; }
+:is(html.rz-account, #user-favorites-holder) #addcat-fav-form .errors { flex-basis: 100%; color: #E5484D !important; font: 600 14px/1.4 var(--text) !important; background: none !important; padding: 0 !important; }
+html.rz-account .b-favorites_content__holder .b-info__page { grid-column: 1 / -1; float: none !important; width: auto !important; max-width: 640px; margin: 0 !important; padding: 24px !important; border-radius: 6px; background: var(--s2) !important; border: 0 !important; }
+html.rz-account .b-info__title { color: var(--ink) !important; font: 800 20px/1 var(--disp) !important; text-transform: uppercase; letter-spacing: .03em; background: none !important; border: 0 !important; padding: 0 0 8px !important; }
+html.rz-account .b-info__message { color: var(--ink2) !important; font: 400 16px/1.5 var(--text) !important; background: none !important; border: 0 !important; padding: 0 !important; }
+
+/* ===================== Settings: Rezka's form card + our «Расширение» card ===================== */
+html.rz-account .rz-settings { display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 28px; align-items: start; }
+html.rz-account .rz-settings > :not(form#userinfo, .rz-extcard) { display: none !important; }
+html.rz-account form#userinfo, .rz-extcard { padding: 32px; border-radius: 14px; display: flex; flex-direction: column; gap: 26px; color: var(--ink2); font: 400 15px/1.45 var(--text); }
+html.rz-account form#userinfo { background: var(--s1); border: 1px solid var(--line); -webkit-backdrop-filter: var(--glass); backdrop-filter: var(--glass); box-shadow: inset 0 1px 0 var(--rim), var(--sh); }
+.rz-extcard p { margin: 0; color: var(--ink2); }
+.rz-extcard .rz-keys { grid-template-columns: auto 1fr auto; gap: 12px 18px; }
+/* Rezka's section tabs (Основные / Безопасность / Настройки сайта и плеера) as chips */
+html.rz-account form#userinfo .b-tabs__main { display: flex !important; flex-wrap: wrap; gap: 6px; margin: 0 !important; padding: 0 !important; list-style: none; border: 0 !important; background: none !important; }
+html.rz-account form#userinfo .b-tabs__main_item { float: none !important; margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; }
+html.rz-account form#userinfo .b-tabs__main_item[hidden] { display: none !important; }
+html.rz-account form#userinfo .b-tabs__main_link.rz-chip { height: 40px; padding: 0 16px !important; border: 0 !important; border-radius: 999px !important; background: transparent !important; color: var(--ink2) !important;
+  font: 600 15px/1 var(--text) !important; text-decoration: none !important; box-shadow: inset 0 0 0 1.5px var(--line); }
+html.rz-account form#userinfo .b-tabs__main_link.rz-chip:hover { color: var(--ink) !important; box-shadow: inset 0 0 0 1.5px var(--ink3); }
+html.rz-account form#userinfo .b-tabs__main_link.rz-chip[aria-current] { background: var(--ink) !important; color: var(--bg) !important; box-shadow: none; }
+/* «Основные»: label | field rows */
+html.rz-account form#userinfo .b-profile__cols { display: flex !important; flex-direction: column; gap: 22px; margin: 0 !important; }
+html.rz-account form#userinfo .b-profile__col_item { float: none !important; width: auto !important; margin: 0 !important; padding: 0 !important; display: grid !important; grid-template-columns: 170px minmax(0, 1fr); gap: 22px 24px; align-items: center; }
+html.rz-account form#userinfo .b-profile__col_item > :not(label) { grid-column: 2; }
+html.rz-account form#userinfo .b-profile_input-group { display: contents !important; }
+html.rz-account form#userinfo label { color: var(--ink2) !important; font: 600 15px/1.3 var(--text) !important; }
+html.rz-account form#userinfo .b-profile_input-group > div { color: var(--ink) !important; font: 700 18px/1.3 var(--text) !important; }
+html.rz-account form#userinfo .b-userprofile__avatar_wrapper { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; float: none !important; margin: 0 !important; }
+html.rz-account form#userinfo .b-userprofile__avatar_holder { position: relative; width: 88px !important; height: 88px !important; border-radius: 50%; overflow: hidden; margin: 0 !important; background: var(--field) !important; border: 0 !important; cursor: pointer; }
+html.rz-account form#userinfo .b-userprofile__avatar_holder:focus-within { outline: 2px solid var(--acc); outline-offset: 3px; }
+html.rz-account form#userinfo .b-userprofile__avatar_holder img { width: 100% !important; height: 100% !important; object-fit: cover; }
+html.rz-account form#userinfo .b-userprofile__avatar_wrapper .rz-hint { max-width: 22ch; }
+html.rz-account form#userinfo .hd-label-row { display: flex !important; align-items: center; gap: 10px; margin: 0 !important; }
+html.rz-account form#userinfo .hd-label-row label { margin: 0 !important; padding: 0 !important; text-indent: 0 !important; font-weight: 500 !important; cursor: pointer; }
+html.rz-account form#userinfo input[type=checkbox] { width: 20px !important; height: 20px !important; margin: 0 !important; accent-color: var(--sig); position: static !important; opacity: 1 !important; flex: none; }
+html.rz-account form#userinfo .hd-label-row label::before, html.rz-account form#userinfo .hd-label-row label::after { display: none !important; }
+html.rz-account form#userinfo :is(.b-field, select, input[type=password], input[type=text], input[type=email]) { width: 100% !important; max-width: none !important; height: 48px !important; padding: 0 14px !important; box-sizing: border-box;
+  border-radius: 4px !important; border: 1.5px solid var(--line) !important; background: var(--s2) !important; color: var(--ink) !important; font: 500 16px/1 var(--text) !important; box-shadow: none !important; }
+html.rz-account form#userinfo :is(.b-field, select):focus { outline: none; border-color: var(--sig) !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--sig) 35%, transparent) !important; }
+html.rz-account form#userinfo select option { background: var(--bg); color: var(--ink); }
+html.rz-account form#userinfo .fieldsubmit { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; margin: 0 !important; padding: 22px 0 0 !important; border-top: 1px solid var(--line); background: none !important; float: none !important; width: auto !important; }
+html.rz-account form#userinfo .fieldsubmit .btn { height: 48px !important; padding: 0 22px !important; margin: 0 !important; border: 0 !important; border-radius: 4px !important; cursor: pointer;
+  background: var(--field) !important; color: var(--on-sig) !important; font: 800 20px/1 var(--disp) !important; text-transform: uppercase; letter-spacing: .03em; box-shadow: none !important; text-shadow: none !important; }
+html.rz-account form#userinfo .fieldsubmit .btn:hover { background: var(--field-h) !important; }
+/* «Безопасность» and «Настройки сайта и плеера»: Rezka's table form */
+html.rz-account form#userinfo .tableform { width: 100% !important; border-collapse: collapse; background: none !important; }
+html.rz-account form#userinfo .tableform td { display: block; padding: 0 0 18px !important; border: 0 !important; background: none !important; }
+html.rz-account form#userinfo .tableform td > .b-field { display: block; margin-top: 8px !important; }
+html.rz-account form#userinfo .tableform td br { display: none; }
+html.rz-account form#userinfo .tableform td.sep-title { padding: 8px 0 14px !important; font: 800 16px/1 var(--disp) !important; text-transform: uppercase; letter-spacing: .06em; color: var(--ink3) !important; }
+
+@media (max-width: 1280px) {
+  #videosaves-list .b-videosaves__list_item[id] { grid-template-columns: 90px 56px minmax(0, 1.2fr) minmax(0, 1fr) 250px; gap: 18px; }
+  .rz-hcov { width: 56px; height: 84px; }
+  html.rz-account .rz-settings { grid-template-columns: minmax(0, 1fr); }
+}
