@@ -91,11 +91,12 @@
   const pop = el('div', 'rz-pm'); pop.inert = true; pop.setAttribute('role', 'dialog');
   const osd = el('div', 'rz-posd'); osd.setAttribute('aria-hidden', 'true');
   const nextCard = el('div', 'rz-pnext'); nextCard.hidden = true; nextCard.setAttribute('role', 'dialog'); nextCard.setAttribute('aria-label', 'Следующая серия');
+  const skipBtn = el('button', 'rz-pbtn rz-o rz-pskip'); skipBtn.type = 'button'; skipBtn.hidden = true;
   const msg = el('div', 'rz-pmsg'); msg.hidden = true; msg.setAttribute('role', 'alert');
   const fsx = el('span', 'rz-pfsx', 'Esc — выйти из полноэкранного режима'); fsx.hidden = true;
   bar.append(bPlay, bBack, bFwd, bNext, bVol, vol, time, grow, bCC, bGear, bQual, bTheater, bFull);
   ctl.append(seek, bar);
-  ui.append(el('div', 'rz-pscrim'), el('div', 'rz-pscrim rz-ptop'), plate, big, spin, osd, ccTip, pop, nextCard, msg, fsx, ctl);
+  ui.append(el('div', 'rz-pscrim'), el('div', 'rz-pscrim rz-ptop'), plate, big, spin, osd, ccTip, pop, skipBtn, nextCard, msg, fsx, ctl);
   holder.append(ui);
 
   const episodes = () => [...document.querySelectorAll('.b-simple_episode__item:not(.disabled)')];
@@ -360,14 +361,14 @@
   // ---------- end of an episode: «Следующая серия через 5 с» ----------
   let countdown, left = 0;
   const hideNext = () => { clearInterval(countdown); nextCard.hidden = true; };
-  const showNext = () => {
+  const showNext = (cancel = 'Отмена') => {
     const nx = nextEpisode();
     if (!nx || !nextCard.hidden) return;
     const name = nx.querySelector('.rz-et b')?.textContent || 'Серия ' + nx.dataset.episode_id;
     left = 5;
     nextCard.innerHTML = `<span class="rz-pcap">Следующая серия</span><div class="rz-pnx"><span class="rz-pring" style="--k:0"><b>5</b></span><span><span class="rz-pd">${nx.dataset.season_id}×${nx.dataset.episode_id} ${name.replace(/</g, '&lt;')}</span><small>начнётся через 5 с</small></span></div>`;
     const go = el('button', 'rz-pbtn rz-y', 'Смотреть'); go.type = 'button'; go.addEventListener('click', (e) => { e.stopPropagation(); goNext(); });
-    const no = el('button', 'rz-pbtn rz-o', 'Отмена'); no.type = 'button'; no.addEventListener('click', (e) => { e.stopPropagation(); hideNext(); });
+    const no = el('button', 'rz-pbtn rz-o', cancel); no.type = 'button'; no.addEventListener('click', (e) => { e.stopPropagation(); creditsOff = true; hideNext(); });
     const row = el('div', 'rz-pbtns'); row.append(go, no); nextCard.append(row);
     nextCard.hidden = false; setAwake(true);
     countdown = setInterval(() => {
@@ -378,6 +379,40 @@
       if (left <= 0) goNext();
     }, 1000);
   };
+
+  // ---------- end credits: a black picture with only light text, 3 s in a row within the last 4 minutes ----------
+  const probe = Object.assign(document.createElement('canvas'), { width: 96, height: 54 }).getContext('2d', { willReadFrequently: true });
+  const creditsFrame = () => {
+    try {
+      probe.drawImage(video(), 0, 0, 96, 54);
+      const d = probe.getImageData(0, 0, 96, 54).data; let black = 0, mid = 0;
+      for (let i = 0; i < d.length; i += 4) { const y = 0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2]; if (y < 20) black++; else if (y <= 140) mid++; }
+      // measured on Supernatural S9: credits are 95–100% black with under 2% mid-tones, dark scenes keep 9–25% mid-tones
+      return black > 0.93 * 5184 && mid < 0.04 * 5184;
+    } catch { return false; } // a cross-origin stream taints the canvas: then only the end of the video brings the card
+  };
+  let darkFrom = -1, creditsAt = -1, creditsOff = false;
+
+  // ---------- skip the recap or intro: community timestamps from TheIntroDB by IMDb id, season and episode ----------
+  const imdbId = (() => {
+    const b64 = ($('.b-post__info_rates.imdb a')?.getAttribute('href') || '').match(/\/help\/([^/]+)/)?.[1];
+    try { return b64 && decodeURIComponent(atob(b64)).match(/tt\d+/)?.[0]; } catch { return null; }
+  })();
+  let segKey = '', segs = [], segNow = null;
+  const loadSegs = async (ep) => {
+    const key = imdbId && ep ? `${imdbId}&season=${ep.dataset.season_id}&episode=${ep.dataset.episode_id}` : '';
+    if (key === segKey) return;
+    segKey = key; segs = [];
+    if (!key) return;
+    try {
+      const j = await (await fetch('https://api.theintrodb.org/v4/media?imdb_id=' + key)).json();
+      if (segKey !== key) return;
+      segs = [['recap', 'Пропустить пересказ'], ['intro', 'Пропустить заставку']].flatMap(([k, label]) => (j[k] || [])
+        .map((x) => ({ s: (x.start_ms || 0) / 1000, e: x.end_ms / 1000, label }))
+        .filter((x) => x.e - x.s >= 5 && x.e - x.s <= 300)); // drops empty (0–0) and runaway submissions
+    } catch { /* no data for this episode: no button */ }
+  };
+  skipBtn.addEventListener('click', (e) => { e.stopPropagation(); if (segNow) api('seek', segNow.e); skipBtn.hidden = true; });
 
   // ---------- video error: retry, change voice, report ----------
   let errTimer;
@@ -432,8 +467,19 @@
     ui.classList.toggle('rz-started', playing || t > 0);
     const v = video();
     spin.hidden = !(playing && v && v.readyState < 3 && !v.paused);
-    if (playing) { msg.hidden = true; if (t < d - 2) hideNext(); }
-    if (autoplay && d && !playing && Date.now() - autoplay < 15000 && t < 2) { api('play'); autoplay = 0; }
+    if (creditsAt >= 0 && t < creditsAt - 3) { creditsAt = darkFrom = -1; creditsOff = false; } // sought back, or the next episode began
+    if (creditsAt < 0 && playing && d && t > d - 240 && nextEpisode()) {
+      if (t < darkFrom || !creditsFrame()) darkFrom = -1; else if (darkFrom < 0) darkFrom = t;
+      if (darkFrom >= 0 && t - darkFrom >= 3) creditsAt = darkFrom;
+    }
+    if (creditsAt >= 0 && playing && !creditsOff) showNext('Смотреть титры');
+    if (playing) { msg.hidden = true; if (t < d - 2 && creditsAt < 0) hideNext(); }
+    loadSegs($('.b-simple_episode__item.active'));
+    segNow = t > 0 ? segs.find((x) => t >= x.s - 1 && t < x.e - 1) : null;
+    skipBtn.hidden = !segNow;
+    if (segNow && skipBtn.textContent !== segNow.label) skipBtn.textContent = segNow.label;
+    // after a switch Playerjs reports the old episode's time for a while, so only the clock and «playing» are trusted
+    if (autoplay && Date.now() - autoplay < 15000) { if (playing) autoplay = 0; else if (d) api('play'); }
     holder.classList.toggle('rz-ui-on', !playing || ui.classList.contains('rz-awake'));
     const [head, sub] = plateText(), key = head + '|' + sub;
     if (key !== lastPlate) {

@@ -131,7 +131,11 @@ html.rz-on #cdnplayer-container { position: relative; }
 .rz-pbtn.rz-o:hover { background: #EEF0F8 !important; color: #0A0A0A !important; }
 .rz-pfsx { position: absolute; top: 14px; right: 14px; z-index: 3; padding: 8px 12px; border-radius: 4px; background: rgba(10,10,10,.78); font: 600 13px/1 var(--text); color: #C3C7DA; }
 
-.rz-pnext, .rz-ptipc, .rz-pfsx { animation: rz-pup .22s var(--ease) both; }
+/* «Пропустить пересказ»: stays put and visible while the panel hides */
+.rz-pskip { position: absolute; right: 14px; bottom: 84px; z-index: 5; background: rgba(14,14,14,.6) !important; cursor: pointer; }
+.rz-pskip[hidden] { display: none !important; }
+
+.rz-pnext, .rz-ptipc, .rz-pfsx, .rz-pskip { animation: rz-pup .22s var(--ease) both; }
 .rz-pmsg { animation: rz-pfade .22s var(--ease) both; }
 @keyframes rz-pup { from { opacity: 0; transform: translateY(8px); } }
 @keyframes rz-pfade { from { opacity: 0; } }
@@ -139,5 +143,5 @@ html.rz-on #cdnplayer-container { position: relative; }
 @media (prefers-reduced-motion: reduce) {
   .rz-pspin { animation-duration: 3s; } .rz-pring { transition: none; }
   .rz-pm, .rz-posd, .rz-ptip, .rz-pplate, .rz-pctl, .rz-pbig { transition-property: opacity, visibility !important; transform: none !important; }
-  .rz-pnext, .rz-ptipc, .rz-pfsx, .rz-pmsg { animation-name: rz-pfade; }
+  .rz-pnext, .rz-ptipc, .rz-pfsx, .rz-pmsg, .rz-pskip { animation-name: rz-pfade; }
 }
