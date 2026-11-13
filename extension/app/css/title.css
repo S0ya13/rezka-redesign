@@ -76,6 +76,39 @@ a.rz-rnum:hover span { color: var(--ink); text-decoration: underline; text-under
 .rz-billing a:hover { text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 6px; }
 .rz-billing .rz-dot { font-weight: 900; font-size: 46px; color: var(--ink3); margin: 0 4px; }
 .rz-billing .rz-slogan { font-weight: 900; font-size: 46px; }
+.rz-billing .person-name-item { font-size: 46px; } /* the popup is placed from this wrapper's box: make it as tall as the name */
+
+/* person popup: Rezka's own tooltipster on the names (/ajax/person_info/), dressed as a T glass card */
+html.rz-title .tooltipster-base { z-index: 1400 !important; min-width: 340px; max-width: 460px; border-radius: 8px; background: var(--pop) !important; border: 1px solid var(--line);
+  box-shadow: inset 0 1px 0 var(--rim), 0 28px 64px -22px rgba(0,0,0,.75); color: var(--ink); font: 400 14px/1.45 var(--text);
+  -webkit-backdrop-filter: var(--glass); backdrop-filter: var(--glass); /* floats over the huge billing names: frost what shows through */
+  transition-property: opacity, transform !important; transition-duration: .22s !important; transition-timing-function: var(--ease) !important; transform-origin: 50% 100%; }
+html.rz-title .tooltipster-base.tooltipster-fade { opacity: 0; transform: translateY(8px) scale(.97); }
+html.rz-title .tooltipster-base.tooltipster-fade.tooltipster-fade-show { opacity: 1; transform: none; }
+html.rz-title .tooltipster-base.rz-below { transform-origin: 50% 0; }
+html.rz-title .tooltipster-base.rz-below.tooltipster-fade:not(.tooltipster-fade-show) { transform: translateY(-8px) scale(.97); }
+html.rz-title .tooltipster-arrow { display: none; }
+html.rz-title .tooltipster-content { padding: 20px 22px 18px !important; overflow: visible !important; background: none !important; color: inherit !important; font: inherit !important; }
+html.rz-title .b-tt_popup__loader { display: block; width: 24px; height: 24px; margin: 8px auto; border: 3px solid var(--line); border-top-color: var(--acc); border-radius: 50%; background: none !important; animation: rz-tspin .8s linear infinite; }
+@keyframes rz-tspin { to { transform: rotate(360deg); } }
+.b-person__popup_name a { color: var(--ink) !important; font: 900 30px/.95 var(--disp) !important; text-transform: uppercase; letter-spacing: -.005em; text-decoration: none !important; }
+.b-person__popup_name a:hover { text-decoration: underline !important; text-underline-offset: 4px; }
+.b-person__popup_name .b-post-edit { display: none; }
+.b-person__popup_namealt { margin-top: 4px; color: var(--ink3) !important; font: 500 14px/1.3 var(--text) !important; }
+.b-person__popup_inner { display: flex; gap: 18px; margin-top: 16px; padding-left: 0 !important; }
+.b-person__popup_holder_photo { flex: none; float: none !important; margin: 0 !important; }
+.b-person__popup_holder_photo .photo-link, .b-person__popup_photo { display: block; border: 0 !important; padding: 0 !important; background: none !important; }
+.b-person__popup_photo img { display: block; width: 84px !important; height: auto !important; aspect-ratio: 63/100; object-fit: cover; border-radius: 4px; border: 0 !important; background: var(--s2); }
+.b-person__popup_holder_photo .overlay { display: none !important; }
+.b-person__popup_holder_content { min-width: 0; flex: 1; float: none !important; margin: 0 !important; }
+.b-person__popup_content { border-collapse: collapse; width: 100%; }
+.b-person__popup_content td { padding: 3px 0; vertical-align: top; border: 0 !important; background: none !important; }
+.b-person__popup_content td.t { padding-right: 14px; color: var(--ink3) !important; font-size: 13px; white-space: nowrap; }
+.b-person__popup_content td.v { color: var(--ink) !important; }
+.b-person__popup_content td.stats { padding-top: 12px; color: var(--ink2) !important; }
+.b-person__popup_content td.stats a { padding: 0 !important; background: none !important; color: var(--acc) !important; font-weight: 600; text-decoration: none !important; }
+.b-person__popup_content td.stats a:hover { text-decoration: underline !important; text-underline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { html.rz-title .tooltipster-base { transition-property: opacity !important; transform: none !important; } }
 
 /* ===================== About + facts ===================== */
 .rz-tabout { display: grid; grid-template-columns: minmax(0,1.15fr) minmax(0,1fr); gap: 72px; padding-top: 72px; }
@@ -250,12 +283,23 @@ html.rz-on .b-content__inline_items.rz-shelf { grid-template-columns: none; grid
 #hd-comments-list .b-comment__report:hover { opacity: 1; }
 #hd-comments-list .b-comment .text { margin: 8px 0 0 !important; padding: 0 !important; max-width: 72ch; color: var(--ink) !important; font: 400 17px/1.55 var(--text) !important; overflow-wrap: anywhere; }
 #hd-comments-list .b-comment .text a { color: var(--ink) !important; text-decoration: underline; text-underline-offset: 3px; }
-#hd-comments-list .title_spoiler { display: inline-flex; align-items: center; gap: 10px; height: 40px; margin: 6px 0; padding: 0 14px; border-radius: 4px; background: var(--s2) !important; border: 0 !important; }
-#hd-comments-list .title_spoiler, #hd-comments-list .title_spoiler a { color: var(--ink) !important; font: 800 18px/1 var(--disp) !important; text-transform: uppercase; letter-spacing: .04em; text-decoration: none !important; }
-#hd-comments-list .title_spoiler:hover { background: var(--field) !important; }
-#hd-comments-list .title_spoiler:hover, #hd-comments-list .title_spoiler:hover a { color: var(--on-sig) !important; }
-#hd-comments-list .title_spoiler img { display: none; }
-#hd-comments-list .text_spoiler { margin: 4px 0 8px; padding: 12px 14px; border: 0 !important; border-radius: 4px; background: var(--s2) !important; color: var(--ink) !important; }
+/* spoilers: a small chip inside the line; Rezka's ShowOrHide removes the chip and shows the text inline */
+#hd-comments-list .title_spoiler { position: relative; display: inline-flex; align-items: center; gap: 6px; height: auto; margin: 0 2px; padding: 4px 8px 3px; vertical-align: 1px; border-radius: 3px; cursor: pointer;
+  background: var(--s2) !important; border: 1px dashed color-mix(in srgb, var(--ink) 30%, transparent) !important; transition: background .2s, border-color .2s; }
+#hd-comments-list .title_spoiler::before { content: ''; flex: none; width: 13px; height: 13px; background: currentColor; color: var(--ink2);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4'%3E%3Cpath d='M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4'%3E%3Cpath d='M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E") center/contain no-repeat; }
+#hd-comments-list .title_spoiler, #hd-comments-list .title_spoiler a { color: var(--ink2) !important; font: 800 14px/1 var(--disp) !important; text-transform: uppercase; letter-spacing: .08em; text-decoration: none !important; }
+#hd-comments-list .title_spoiler a { display: inline !important; position: static !important; margin: 0 !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; }
+#hd-comments-list .title_spoiler a::after, #hd-comments-list .title_spoiler a:hover::after { content: '' !important; position: absolute !important; inset: 0 !important; width: auto !important; height: auto !important;
+  margin: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; } /* the whole chip opens it; Rezka paints a pill here on hover */
+#hd-comments-list .title_spoiler:hover { background: var(--field) !important; border-color: transparent !important; }
+#hd-comments-list .title_spoiler:hover, #hd-comments-list .title_spoiler:hover a, #hd-comments-list .title_spoiler:hover::before { color: var(--on-sig) !important; }
+#hd-comments-list .title_spoiler img { display: none !important; }
+#hd-comments-list .text_spoiler { margin: 0 !important; padding: 1px 5px !important; border: 0 !important; border-radius: 3px; background: var(--s2) !important; color: var(--ink) !important;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone; animation: rz-spoil .4s var(--ease); }
+@keyframes rz-spoil { from { opacity: 0; filter: blur(6px); } }
+@media (prefers-reduced-motion: reduce) { #hd-comments-list .text_spoiler { animation: none; } }
 #hd-comments-list .quote, #hd-comments-list blockquote { margin: 8px 0; padding: 8px 14px; border: 0 !important; border-left: 3px solid var(--line) !important; background: none !important; color: var(--ink2) !important; }
 #hd-comments-list .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 6px 0 0 !important; padding: 0 !important; }
 #hd-comments-list .actions ul.edit { display: flex; gap: 6px; margin: 0; padding: 0; list-style: none; }
@@ -294,6 +338,13 @@ html.rz-on .b-content__inline_items.rz-shelf { grid-template-columns: none; grid
 #comments-form .btn-action, #comments-form button[type=submit] { display: inline-flex !important; align-items: center; height: 48px !important; padding: 0 22px !important; border: 0 !important; border-radius: 4px !important;
   background: var(--field) !important; color: var(--on-sig) !important; text-shadow: none !important; box-shadow: none !important; font: 800 20px/1 var(--disp) !important; text-transform: uppercase; letter-spacing: .03em; cursor: pointer; }
 #comments-form .btn-action:hover { background: var(--field-h) !important; }
+
+/* ===================== Motion: switches and lists that Rezka shows by display ===================== */
+/* a season's episodes, a new voice's episodes and an opened schedule season fade up as they appear (Rezka slides the schedule itself) */
+html.rz-title .b-simple_episodes__list, html.rz-title .b-post__schedule_list { animation: rz-tin .32s var(--ease); }
+html.rz-title :is(.b-post__schedule_block_title, .b-simple_season__item, .b-translator__item, .b-simple_episode__item) { transition: background-color .2s, box-shadow .2s, color .2s !important; }
+@keyframes rz-tin { from { opacity: 0; transform: translateY(8px); } }
+@media (prefers-reduced-motion: reduce) { html.rz-title .b-simple_episodes__list, html.rz-title .b-post__schedule_list { animation: none; } }
 
 /* ===================== Narrow windows ===================== */
 @media (max-width: 1100px) {

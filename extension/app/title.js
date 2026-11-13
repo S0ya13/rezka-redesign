@@ -52,6 +52,12 @@ export async function run() {
   if (fav) { // Rezka rewrites this button when the state changes: keep our short label
     const label = () => { const b = $('.btn', fav); if (!b || b.dataset.rz === b.textContent) return; const inFav = !/добав/i.test(b.textContent); b.textContent = inFav ? 'В закладках' : 'В закладки'; b.dataset.rz = b.textContent; b.classList.toggle('rz-in', inFav); };
     label(); new MutationObserver(label).observe(fav, { childList: true, subtree: true, characterData: true });
+    // Rezka closes the folders popover only with its own «Закрыть» link: Esc and a click outside use that link too
+    // (its href is a javascript: no-op, which our CSP refuses to run: cancel it, Rezka's jQuery handler still hides the popover)
+    $('#addcat-fav-close')?.addEventListener('click', (e) => e.preventDefault());
+    const close = () => { const p = $('#user-favorites-holder'); if (p && p.style.display !== 'none' && p.offsetHeight) $('#addcat-fav-close')?.click(); };
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+    document.addEventListener('click', (e) => { if (!fav.contains(e.target)) close(); });
   }
 
   // «Смотреть» scrolls to the player and starts it (player.js listens for rz-play); «Продолжить · S×E» when it's in the history
@@ -85,22 +91,17 @@ export async function run() {
       h('div', { class: 'rz-tact' }, cta, trailer, fav, theaterBtn)),
     h('aside', { class: 'rz-tr' }, posterImg, lists.length ? [h('span', { class: 'rz-lbl' }, 'Входит в списки'), h('div', {}, lists)] : null));
 
-  // ---------- billing block: slogan, cast, directors as poster credits; names stay Rezka links ----------
-  const names = (cell) => cell ? $$('a', cell).map((a) => a.cloneNode(true)) : [];
-  const join = (els) => els.flatMap((a, i) => [i ? [' ', h('span', { class: 'rz-dot', 'aria-hidden': 'true' }, '·'), ' '] : ' ', a]); // spaces: lines may break between names only
-  const cast = names(castCell), dirs = names(rows['Режиссер']);
-  const slogan = txt(rows['Слоган']);
-  const billing = (slogan || cast.length || dirs.length) ? h('section', { class: 'rz-wrap' }, h('p', { class: 'rz-billing' },
-    slogan && slogan !== '-' ? [h('span', { class: 'rz-role' }, 'Слоган'), h('span', { class: 'rz-slogan' }, slogan), h('br')] : null,
-    cast.length ? [h('span', { class: 'rz-role' }, 'В ролях'), join(cast), /и другие/.test(txt(castCell)) ? h('span', { class: 'rz-role' }, 'и другие') : null, h('br')] : null,
-    dirs.length ? [h('span', { class: 'rz-role' }, dirs.length > 1 ? 'Режиссёры' : 'Режиссёр'), join(dirs)] : null)) : null;
-
   // ---------- about: description + every Rezka fact ----------
   const facts = h('dl', { class: 'rz-facts' });
   const fact = (label, node) => facts.append(h('dt', {}, label), node);
   if (orig) fact('Оригинал', h('dd', {}, orig));
   const LABEL = { 'Режиссер': 'Режиссёр', 'В качестве': 'Качество' };
-  for (const [k, cell] of Object.entries(rows)) if (!['Рейтинги', 'Входит в списки', 'Из серии', 'Слоган'].includes(k)) fact(LABEL[k] || k, h('dd', { html: cell.innerHTML.trim() }));
+  for (const [k, cell] of Object.entries(rows)) if (!['Рейтинги', 'Входит в списки', 'Из серии', 'Слоган'].includes(k)) {
+    const dd = h('dd', { html: cell.innerHTML.trim() });
+    // copied names keep the class but not Rezka's tooltipster data, which makes every person popup throw (its onlyOne loop)
+    for (const el of $$('.tooltipstered', dd)) el.classList.remove('tooltipstered');
+    fact(LABEL[k] || k, dd);
+  }
   if (status) fact('Статус', h('dd', {}, status));
   const series = rows['Из серии'] ? $$('a', rows['Из серии']).map((a) => h('a', { class: 'rz-chip', href: a.getAttribute('href') }, txt(a))) : [];
   const about = h('section', { class: 'rz-wrap rz-tabout' },
@@ -109,6 +110,19 @@ export async function run() {
       h('p', { class: 'rz-desc' }, txt($('.b-post__description_text'))),
       series.length ? [h('span', { class: 'rz-lbl' }, 'Из серии'), h('div', { class: 'rz-chips' }, series)] : null),
     facts);
+
+  // ---------- billing block: slogan, cast, directors as poster credits ----------
+  // Rezka's own name items are moved, not cloned, so its person popup (tooltipster + /ajax/person_info/) stays bound to them.
+  // Built after the facts, which copy the director cell's markup before its names leave it.
+  const names = (cell) => cell ? $$('a', cell).map((a) => a.closest('.person-name-item') || a) : [];
+  const join = (els) => els.flatMap((a, i) => [i ? [' ', h('span', { class: 'rz-dot', 'aria-hidden': 'true' }, '·'), ' '] : ' ', a]); // spaces: lines may break between names only
+  const others = /и другие/.test(txt(castCell));
+  const cast = names(castCell), dirs = names(rows['Режиссер']);
+  const slogan = txt(rows['Слоган']);
+  const billing = (slogan || cast.length || dirs.length) ? h('section', { class: 'rz-wrap' }, h('p', { class: 'rz-billing' },
+    slogan && slogan !== '-' ? [h('span', { class: 'rz-role' }, 'Слоган'), h('span', { class: 'rz-slogan' }, slogan), h('br')] : null,
+    cast.length ? [h('span', { class: 'rz-role' }, 'В ролях'), join(cast), others ? h('span', { class: 'rz-role' }, 'и другие') : null, h('br')] : null,
+    dirs.length ? [h('span', { class: 'rz-role' }, dirs.length > 1 ? 'Режиссёры' : 'Режиссёр'), join(dirs)] : null)) : null;
 
   // ---------- voices ----------
   const voices = $('.b-translators__block');
@@ -155,6 +169,18 @@ export async function run() {
   const content = $('.b-container.b-content') || $('#player').closest('.b-content__columns');
   content.before(h('div', { id: 'rz-title' }, field, main, billing, about, watch));
   content.after(lower);
+
+  // Rezka puts the person popup above the name only: put it below when above would hide it under our sticky header
+  const flip = (tip) => {
+    const origin = $('.person-name-item.showing-content');
+    if (!origin || tip.getBoundingClientRect().top >= ($('#rz-header')?.offsetHeight || 64) + 8) return;
+    tip.classList.add('rz-below');
+    tip.style.top = origin.getBoundingClientRect().bottom + scrollY + 10 + 'px';
+  };
+  new MutationObserver((recs) => { for (const r of recs) for (const tip of r.addedNodes) if (tip.classList?.contains('tooltipster-base')) {
+    flip(tip); // and again whenever Rezka repositions it (content arrives from /ajax/person_info/)
+    new MutationObserver(() => flip(tip)).observe(tip, { attributes: true, attributeFilter: ['style'], childList: true, subtree: true });
+  } }).observe(document.body, { childList: true });
 
   // the poster starts inside the colour field: pull it up by the field's height
   if (posterImg) new ResizeObserver(() => { posterImg.style.marginTop = -(field.offsetHeight - 36) + 'px'; }).observe(field);
