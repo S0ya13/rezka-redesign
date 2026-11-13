@@ -14,5 +14,14 @@
   } catch (e) {
     console.error('[rezka-redesign]', e);
     document.documentElement.classList.add('rz-ready', 'rz-failed');
+    // Rezka's own page stays usable; say what happened and offer a retry
+    const card = document.createElement('div');
+    card.id = 'rz-fail';
+    card.setAttribute('role', 'alert');
+    card.innerHTML = '<b>Не удалось перестроить страницу</b><p>Похоже, Rezka поменяла разметку. Страница открыта как есть — смотреть это не мешает.</p>'
+      + '<button type="button" class="rz-fail-y">Повторить</button><button type="button" class="rz-fail-o">Скрыть</button>';
+    card.querySelector('.rz-fail-y').onclick = () => location.reload();
+    card.querySelector('.rz-fail-o').onclick = () => card.remove();
+    document.body.append(card);
   }
 })();

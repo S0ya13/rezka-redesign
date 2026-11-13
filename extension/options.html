@@ -4,16 +4,25 @@
 <meta charset="utf-8">
 <title>Rezka Redesign</title>
 <style>
-  body { font: 14px/1.5 system-ui, sans-serif; margin: 16px; min-width: 340px; }
-  label { display: block; font-weight: 600; margin-bottom: 6px; }
-  input { width: 100%; box-sizing: border-box; padding: 8px; font: inherit; }
-  p { color: #555; margin: 8px 0 0; }
+  :root { color-scheme: light dark; --ink: #0F1222; --ink3: #585E76; --line: rgba(15,18,34,.14); --sig: #3A4A8A; }
+  @media (prefers-color-scheme: dark) { :root { --ink: #EEF0F8; --ink3: #959BB0; --line: rgba(255,255,255,.14); } }
+  body { font: 14px/1.5 system-ui, sans-serif; margin: 16px; min-width: 360px; color: var(--ink); }
+  label { display: block; font-weight: 600; margin: 0 0 6px; }
+  .row { display: flex; gap: 8px; }
+  input[type=password] { flex: 1; box-sizing: border-box; height: 38px; padding: 0 10px; font: inherit; border: 1.5px solid var(--line); border-radius: 4px; background: transparent; color: inherit; }
+  button { height: 38px; padding: 0 14px; border: 0; border-radius: 4px; background: var(--sig); color: #fff; font: 600 14px system-ui, sans-serif; cursor: pointer; }
+  p { color: var(--ink3); margin: 8px 0 16px; }
+  .check { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); font-weight: 500; }
+  #status:empty { display: none; }
+  #status { color: var(--ink); }
 </style>
 </head>
 <body>
-  <label for="key">OMDb API key</label>
-  <input id="key" type="password" autocomplete="off" spellcheck="false">
-  <p>Бесплатный ключ: omdbapi.com → API Key. Нужен для оценок IMDb по сериям. <span id="status"></span></p>
+  <label for="key">Ключ OMDb для оценок IMDb по сериям</label>
+  <div class="row"><input id="key" type="password" autocomplete="off" spellcheck="false"><button id="check" type="button">Проверить</button></div>
+  <p>Бесплатный ключ: omdbapi.com → API Key, 1000 запросов в сутки. <span id="status" role="status"></span></p>
+  <label class="check">Включать кинотеатр по умолчанию <input id="theater" type="checkbox"></label>
+  <label class="check">Превью карточки при наведении <input id="preview" type="checkbox"></label>
   <script src="options.js"></script>
 </body>
 </html>
