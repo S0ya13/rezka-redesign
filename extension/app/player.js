@@ -61,7 +61,8 @@
   const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
   const btn = (cls, label, icon, on) => {
     const b = el('button', 'rz-pb ' + cls, icon); b.type = 'button'; b.setAttribute('aria-label', label); b.title = label;
-    b.addEventListener('click', (e) => { e.stopPropagation(); on(e); }); return b;
+    // a mouse click (detail > 0) lets go of focus, so Space keeps meaning play/pause; Tab users keep it
+    b.addEventListener('click', (e) => { e.stopPropagation(); on(e); if (e.detail) b.blur(); }); return b;
   };
 
   const ui = el('div', 'rz-pui');
@@ -93,7 +94,7 @@
   bPip.hidden = !window.documentPictureInPicture;
   const bFull = btn('', 'Полный экран (F)', I.full, () => fullscreen());
   const pop = el('div', 'rz-pm'); pop.inert = true; pop.setAttribute('role', 'dialog');
-  const osd = el('div', 'rz-posd'); osd.setAttribute('aria-hidden', 'true');
+  const osd = el('div', 'rz-posd', '<span class="rz-posd-i"></span><span class="rz-posd-l"><span></span></span><b></b>'); osd.setAttribute('aria-hidden', 'true');
   const nextCard = el('div', 'rz-pnext'); nextCard.hidden = true; nextCard.setAttribute('role', 'dialog'); nextCard.setAttribute('aria-label', 'Следующая серия');
   const skipBtn = el('button', 'rz-pbtn rz-o rz-pskip'); skipBtn.type = 'button'; skipBtn.hidden = true;
   const msg = el('div', 'rz-pmsg'); msg.hidden = true; msg.setAttribute('role', 'alert');
@@ -106,7 +107,7 @@
   const episodes = () => [...document.querySelectorAll('.b-simple_episode__item:not(.disabled)')];
   const nextEpisode = () => { const all = episodes(), cur = $('.b-simple_episode__item.active'); const i = all.indexOf(cur); return i >= 0 ? all[i + 1] : null; };
   const toggle = () => { closeMenu(); api(api('playing') ? 'pause' : 'play'); };
-  const skip = (s) => api('seek', Math.max(0, Math.min((+api('duration') || 0) - 1, (+api('time') || 0) + s)));
+  const skip = (s) => { const to = Math.max(0, Math.min((+api('duration') || 0) - 1, (+api('time') || 0) + s)); api('seek', to); return to; };
   const fullscreen = () => (document.fullscreenElement ? document.exitFullscreen() : holder.requestFullscreen?.());
 
   // next episode, also across seasons (Rezka's own tabs are clicked, so its handlers do the loading)
@@ -235,7 +236,7 @@
     if (!(+api('duration'))) return;
     line.setPointerCapture(e.pointerId);
     const move = (ev) => line.style.setProperty('--p', seekAt(ev.clientX)[0]);
-    const up = (ev) => { line.removeEventListener('pointermove', move); line.removeEventListener('pointerup', up); api('seek', seekAt(ev.clientX)[1]); dragging = false; };
+    const up = (ev) => { line.removeEventListener('pointermove', move); line.removeEventListener('pointerup', up); api('seek', seekAt(ev.clientX)[1]); dragging = false; line.blur(); };
     dragging = true; move(e);
     line.addEventListener('pointermove', move); line.addEventListener('pointerup', up);
   });
@@ -323,11 +324,21 @@
   // «Смотреть / Продолжить» on the page asks us to start playback
   document.addEventListener('rz-play', () => { if (!api('playing')) api('play'); wake(); });
 
+  // hotkeys answer with a small plate that slides up from the bottom edge and back; the panel itself stays hidden
   let osdTimer;
+  const [osdIcon, osdLine, osdText] = osd.children;
+  const flash = (icon, part, text = '') => {
+    if (osdIcon.dataset.k !== icon) { osdIcon.innerHTML = I[icon]; osdIcon.dataset.k = icon; }
+    osdLine.hidden = part == null;
+    if (part != null) osdLine.firstChild.style.transform = `scaleX(${Math.min(1, Math.max(0, part))})`;
+    osdText.textContent = text;
+    osd.classList.add('rz-show'); holder.classList.add('rz-osd-on');
+    clearTimeout(osdTimer);
+    osdTimer = setTimeout(() => { osd.classList.remove('rz-show'); holder.classList.remove('rz-osd-on'); }, 900);
+  };
   const showVolume = () => {
     const v = api('muted') ? 0 : Math.round((+api('volume') || 0) * 100);
-    osd.innerHTML = `${v ? I.vol : I.mute}<span class="rz-posd-l"><span style="width:${v}%"></span></span><b>${v}%</b>`;
-    osd.classList.add('rz-show'); clearTimeout(osdTimer); osdTimer = setTimeout(() => osd.classList.remove('rz-show'), 900);
+    flash(v ? 'vol' : 'mute', v / 100, v + '%');
   };
   const nudgeVolume = (dv) => {
     const v = Math.round(Math.min(1, Math.max(0, (api('muted') ? 0 : +api('volume') || 0) + dv)) * 10) / 10;
@@ -342,15 +353,17 @@
     const k = e.code;
     if (k === 'Space') {
       if (e.target.closest?.('button, a, [role="button"], [role="slider"]') || !onScreen()) return;
-      e.preventDefault(); toggle(); wake();
+      e.preventDefault(); const was = api('playing'); toggle(); flash(was ? 'pause' : 'play');
+      if (!was) { clearTimeout(idle); setAwake(false); } // the panel shown during the pause leaves with it
     } else if (k === 'ArrowLeft' || k === 'ArrowRight') {
       if (!onScreen()) return;
-      e.preventDefault(); skip(k === 'ArrowLeft' ? -10 : 10); wake();
+      e.preventDefault(); const to = skip(k === 'ArrowLeft' ? -10 : 10), d = +api('duration') || 0;
+      flash(k === 'ArrowLeft' ? 'back' : 'fwd', d ? to / d : 0, fmt(to));
     } else if (k === 'ArrowUp' || k === 'ArrowDown') {
       if (!onScreen()) return;
-      e.preventDefault(); nudgeVolume(k === 'ArrowUp' ? 0.1 : -0.1); wake();
+      e.preventDefault(); nudgeVolume(k === 'ArrowUp' ? 0.1 : -0.1);
     } else if (k === 'KeyF') { e.preventDefault(); fullscreen(); }
-    else if (k === 'KeyM') { e.preventDefault(); api(api('muted') ? 'unmute' : 'mute'); showVolume(); wake(); }
+    else if (k === 'KeyM') { e.preventDefault(); api(api('muted') ? 'unmute' : 'mute'); showVolume(); }
   });
   // Esc closes an open menu only (the page's own Esc would also leave the theater)
   addEventListener('keydown', (e) => { if (e.key === 'Escape' && menuKind) { e.stopPropagation(); const b = ({ all: bGear, q: bQual, cc: bCC })[menuKind]; closeMenu(); b.focus({ preventScroll: true }); } }, true);
