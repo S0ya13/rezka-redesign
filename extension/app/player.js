@@ -7,7 +7,8 @@
 
   const api = (...a) => { try { return window.CDNPlayer && window.CDNPlayer.api(...a); } catch { return undefined; } };
   const $ = (s, r = document) => r.querySelector(s);
-  const video = () => $('#cdnplayer video');
+  let pipVideo = null; // the <video> while it sits in the picture-in-picture window
+  const video = () => pipVideo || $('#cdnplayer video');
   const clean = (s) => String(s ?? '').replace(/<[^>]*>/g, '').trim();
   const fmt = (s) => {
     s = Math.max(0, Math.floor(+s || 0));
@@ -26,6 +27,7 @@
     cc: svg('<rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M7 13.5h4M13 13.5h4M7 10h10"/>'),
     gear: svg('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>'),
     theater: svg('<rect x="2.5" y="6" width="19" height="12" rx="2"/>'),
+    pip: svg('<rect x="2.5" y="5" width="19" height="14" rx="2"/><rect x="12" y="11" width="7" height="5.5" rx="1" fill="currentColor" stroke="none"/>'),
     full: svg('<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>'),
     warn: svg('<path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4.5M12 17.2v.3"/>', 0, 40),
     retry: svg('<path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v4h-4"/>', 0, 20),
@@ -87,6 +89,8 @@
   const bGear = btn('', 'Качество, субтитры и скорость', I.gear, () => menu('all'));
   const bQual = btn('rz-pql', 'Качество', '', () => menu('q'));
   const bTheater = btn('', 'Кинотеатр (T)', I.theater, () => $('.rz-theater-btn')?.click());
+  const bPip = btn('', 'Картинка в картинке', I.pip, () => pip());
+  bPip.hidden = !window.documentPictureInPicture;
   const bFull = btn('', 'Полный экран (F)', I.full, () => fullscreen());
   const pop = el('div', 'rz-pm'); pop.inert = true; pop.setAttribute('role', 'dialog');
   const osd = el('div', 'rz-posd'); osd.setAttribute('aria-hidden', 'true');
@@ -94,7 +98,7 @@
   const skipBtn = el('button', 'rz-pbtn rz-o rz-pskip'); skipBtn.type = 'button'; skipBtn.hidden = true;
   const msg = el('div', 'rz-pmsg'); msg.hidden = true; msg.setAttribute('role', 'alert');
   const fsx = el('span', 'rz-pfsx', 'Esc — выйти из полноэкранного режима'); fsx.hidden = true;
-  bar.append(bPlay, bBack, bFwd, bNext, bVol, vol, time, grow, bCC, bGear, bQual, bTheater, bFull);
+  bar.append(bPlay, bBack, bFwd, bNext, bVol, vol, time, grow, bCC, bGear, bQual, bPip, bTheater, bFull);
   ctl.append(seek, bar);
   ui.append(el('div', 'rz-pscrim'), el('div', 'rz-pscrim rz-ptop'), plate, big, spin, osd, ccTip, pop, skipBtn, nextCard, msg, fsx, ctl);
   holder.append(ui);
@@ -432,7 +436,40 @@
     // Playerjs swaps sources and retries on its own: only a lasting error is shown
     errTimer = setTimeout(() => { const v = video(); if (v?.error && !api('playing')) showError(); }, 4000);
   }, true);
-  document.addEventListener('ended', (e) => { if (e.target?.tagName === 'VIDEO' && holder.contains(e.target)) showNext(); }, true);
+  const onEnded = (e) => { if (e.target === video()) showNext(); };
+  document.addEventListener('ended', onEnded, true);
+
+  // ---------- picture in picture: the video and a copy of the subtitles in an always-on-top window ----------
+  // Chromium opens it by itself when the user switches to another tab (Media Session «enterpictureinpicture»)
+  // and closes it on the way back. A video-only PiP would lose Playerjs's subtitles, which are page markup.
+  const pip = async () => {
+    const v = video();
+    if (pipVideo || !v || !window.documentPictureInPicture || documentPictureInPicture.window) return;
+    const w = await documentPictureInPicture.requestWindow({ width: 560, height: Math.round(560 * (v.videoHeight / v.videoWidth || 9 / 16)) });
+    const d = w.document, spot = document.createComment('rz-pip');
+    const css = d.createElement('style');
+    css.textContent = 'html,body{margin:0;height:100%;background:#000;overflow:hidden;cursor:pointer}'
+      + 'video{position:fixed!important;inset:0!important;width:100%!important;height:100%!important;object-fit:contain;transform:none!important}'
+      + '.s{position:fixed;left:5%;right:5%;bottom:4%;text-align:center;white-space:pre-line;font:500 max(14px,6.2vh)/1.3 system-ui,sans-serif;color:#fff;text-shadow:0 0 3px #000,0 1px 3px #000}';
+    const subs = d.createElement('div'); subs.className = 's';
+    // Chromium pauses a <video> that moves to another document; it goes on playing if it was
+    const move = (place) => { const on = !v.paused; place(); if (on) v.play().catch(() => {}); };
+    v.before(spot);
+    pipVideo = v;
+    move(() => d.body.append(css, v, subs));
+    const copy = () => { subs.textContent = $('#oframecdnplayer > [data-rz-subs]')?.innerText.trim() || ''; };
+    const subsObs = new MutationObserver(copy);
+    w.addEventListener('pagehide', () => { subsObs.disconnect(); pipVideo = null; move(() => spot.replaceWith(v)); hideNative(); });
+    const frame = $('#oframecdnplayer');
+    if (frame) subsObs.observe(frame, { childList: true, subtree: true, characterData: true });
+    copy();
+    d.addEventListener('click', toggle);
+    d.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') { e.preventDefault(); toggle(); } else if (e.code === 'ArrowLeft' || e.code === 'ArrowRight') skip(e.code === 'ArrowLeft' ? -10 : 10);
+    });
+    d.addEventListener('ended', onEnded, true);
+  };
+  try { navigator.mediaSession.setActionHandler('enterpictureinpicture', () => pip()); } catch { /* this browser has no automatic PiP */ }
 
   // ---------- state, 4 times a second ----------
   const plateText = () => {
